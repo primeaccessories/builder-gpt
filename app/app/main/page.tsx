@@ -321,9 +321,9 @@ export default function MainChatPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-[#343541]">
+      <div className="flex-1 flex flex-col bg-[#343541] overflow-hidden">
         {/* Header */}
-        <header className="flex-shrink-0 bg-[#343541] border-b border-white/10">
+        <header className="flex-shrink-0 bg-[#343541] border-b border-white/10 sticky top-0 z-10">
           <div className="px-4 py-3 flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -341,8 +341,8 @@ export default function MainChatPage() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden -webkit-overflow-scrolling-touch">
+          <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
               <div className="text-center py-12">
                 <h2 className="text-3xl font-semibold mb-10 text-white">
@@ -472,9 +472,9 @@ export default function MainChatPage() {
           </div>
         </div>
 
-        {/* Input */}
-        <div className="border-t border-white/10 bg-[#343541] flex-shrink-0">
-          <div className="max-w-3xl mx-auto px-4 md:px-6 py-3 md:py-4">
+        {/* Input - Fixed at bottom on mobile */}
+        <div className="border-t border-white/10 bg-[#343541] flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="max-w-3xl mx-auto px-4 md:px-6 pt-3 md:pt-4 pb-3 md:pb-4">
             <div className="relative bg-[#40414F] rounded-lg border border-black/10 shadow-lg">
               <textarea
                 value={input}
@@ -482,7 +482,7 @@ export default function MainChatPage() {
                 onKeyDown={handleKeyPress}
                 placeholder="Send a message..."
                 rows={1}
-                className="w-full px-4 py-3 pr-12 bg-transparent text-white placeholder-white/50 focus:outline-none resize-none"
+                className="w-full px-4 py-3 pr-12 bg-transparent text-white placeholder-white/50 focus:outline-none resize-none text-base"
                 style={{ minHeight: '52px', maxHeight: '200px' }}
               />
               <button
@@ -495,7 +495,7 @@ export default function MainChatPage() {
                 </svg>
               </button>
             </div>
-            <p className="text-xs text-white/40 mt-3 text-center">
+            <p className="text-xs text-white/40 mt-2 text-center hidden md:block">
               Builder GPT can make mistakes. Always verify important advice.
             </p>
           </div>
