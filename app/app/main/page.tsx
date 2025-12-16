@@ -425,9 +425,9 @@ export default function MainChatPage() {
       {/* Sidebar */}
       <div
         className={`${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } ${
-          sidebarOpen ? 'w-[260px]' : 'w-0 md:w-[260px]'
+          sidebarOpen ? 'w-[260px]' : 'w-0'
         } bg-[#0D0D0D] flex-shrink-0 overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto border-r border-white/[0.08]`}
         style={{
           transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
