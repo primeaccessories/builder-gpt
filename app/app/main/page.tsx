@@ -235,15 +235,15 @@ export default function MainChatPage() {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } ${
           sidebarOpen ? 'w-[260px]' : 'w-0 md:w-[260px]'
-        } bg-[#202123] flex-shrink-0 transition-all duration-200 overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto`}
+        } bg-[#0D0D0D] flex-shrink-0 transition-all duration-300 ease-out overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto border-r border-white/[0.08]`}
       >
         {/* Sidebar Header */}
-        <div className="p-2 space-y-2">
+        <div className="p-3 space-y-2.5">
           {/* Close button - mobile only */}
-          <div className="flex justify-end md:hidden mb-2">
+          <div className="flex justify-end md:hidden -mt-1 -mr-1">
             <button
               onClick={() => setSidebarOpen(false)}
-              className="p-2 hover:bg-[#2A2B32] rounded-md text-white/70 hover:text-white transition-colors"
+              className="p-2.5 hover:bg-white/[0.08] rounded-full text-white/50 hover:text-white transition-all duration-200 active:scale-95"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -254,10 +254,10 @@ export default function MainChatPage() {
           {/* New Chat Button */}
           <button
             onClick={handleNewChat}
-            className="w-full px-3 py-3 border border-white/20 hover:bg-[#2A2B32] rounded-lg text-white text-sm transition-colors flex items-center gap-3"
+            className="w-full px-3 py-2.5 border border-white/[0.12] hover:bg-white/[0.08] rounded-lg text-white/90 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>
             <span>New chat</span>
           </button>
@@ -268,17 +268,17 @@ export default function MainChatPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search chats..."
-              className="w-full px-3 py-2.5 pl-9 bg-[#2A2B32] border border-white/10 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:border-white/20 transition-colors"
+              placeholder="Search..."
+              className="w-full px-3 py-2 pl-9 bg-white/[0.05] border border-white/[0.08] rounded-lg text-white/90 text-sm placeholder-white/30 focus:outline-none focus:bg-white/[0.08] focus:border-white/[0.15] transition-all duration-200"
             />
-            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto px-2">
+        <div className="flex-1 overflow-y-auto px-2 py-2">
           {conversations
             .filter((conv) =>
               conv.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -287,15 +287,15 @@ export default function MainChatPage() {
             <button
               key={conv.id}
               onClick={() => loadConversation(conv.id)}
-              className={`w-full px-3 py-3 rounded-lg text-left text-sm transition-colors group relative ${
+              className={`w-full px-3 py-2.5 mb-1 rounded-lg text-left text-sm font-medium transition-all duration-200 group relative active:scale-[0.98] ${
                 currentConversationId === conv.id
-                  ? 'bg-[#343541] text-white'
-                  : 'text-white/50 hover:bg-[#2A2B32] hover:text-white'
+                  ? 'bg-white/[0.12] text-white shadow-sm'
+                  : 'text-white/60 hover:bg-white/[0.06] hover:text-white/90'
               }`}
             >
-              <div className="truncate flex items-center gap-3">
-                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              <div className="truncate flex items-center gap-2.5">
+                <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <span className="truncate">{conv.name || 'New chat'}</span>
               </div>
@@ -304,17 +304,17 @@ export default function MainChatPage() {
         </div>
 
         {/* User Profile */}
-        <div className="p-2 border-t border-white/10 relative user-menu-container">
+        <div className="p-2.5 border-t border-white/[0.08] relative user-menu-container">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="w-full flex items-center gap-3 hover:bg-[#2A2B32] rounded-lg px-3 py-2 transition-colors text-white text-sm"
+            className="w-full flex items-center gap-3 hover:bg-white/[0.06] rounded-lg px-3 py-2.5 transition-all duration-200 text-white text-sm font-medium active:scale-[0.98]"
           >
-            <div className="w-7 h-7 bg-[#19C37D] rounded-sm flex items-center justify-center text-white text-xs font-semibold">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-lg">
               {userName.charAt(0).toUpperCase()}
             </div>
-            <div className="flex-1 text-left truncate">{userName}</div>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            <div className="flex-1 text-left truncate text-white/90">{userName}</div>
+            <svg className="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
             </svg>
           </button>
 
@@ -353,20 +353,20 @@ export default function MainChatPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-[#343541] overflow-hidden">
+      <div className="flex-1 flex flex-col bg-black overflow-hidden">
         {/* Header */}
-        <header className="flex-shrink-0 bg-[#343541] border-b border-white/10 sticky top-0 z-10">
-          <div className="px-4 py-3 flex items-center gap-2">
+        <header className="flex-shrink-0 bg-black/80 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-10">
+          <div className="px-4 py-3.5 flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-white/10 rounded-md transition-colors text-white"
+              className="p-2 hover:bg-white/[0.08] rounded-full transition-all duration-200 text-white/70 hover:text-white active:scale-95"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
             <div className="flex-1 text-center">
-              <div className="text-sm font-semibold text-white">Builder GPT</div>
+              <div className="text-sm font-semibold text-white/90">Builder GPT</div>
             </div>
             <div className="w-9"></div> {/* Balance the hamburger button */}
           </div>
@@ -376,13 +376,23 @@ export default function MainChatPage() {
         <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
-              <div className="text-center py-12">
-                <h2 className="text-3xl font-semibold mb-10 text-white">
-                  Builder GPT
-                </h2>
+              <div className="text-center py-12 px-4">
+                <div className="mb-12">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-2xl font-semibold mb-2 text-white/90">
+                    Builder GPT
+                  </h2>
+                  <p className="text-sm text-white/50">
+                    Know what to say. Right now.
+                  </p>
+                </div>
 
                 {/* Example prompts */}
-                <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-2.5 max-w-2xl mx-auto">
                   {[
                     { text: 'Customer won\'t pay the final balance. Keeps saying they\'re "not happy" but won\'t list issues.' },
                     { text: 'Customer keeps adding extras. I\'m halfway through and they assume it\'s included.' },
@@ -394,9 +404,9 @@ export default function MainChatPage() {
                     <button
                       key={idx}
                       onClick={() => setInput(example.text)}
-                      className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-sm text-left transition-colors text-white/90"
+                      className="px-4 py-3.5 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] rounded-xl text-sm text-left transition-all duration-200 text-white/70 hover:text-white/90 hover:border-white/[0.15] active:scale-[0.98]"
                     >
-                      <div className="text-sm">{example.text}</div>
+                      <div className="text-sm leading-relaxed">{example.text}</div>
                     </button>
                   ))}
                 </div>
@@ -505,29 +515,33 @@ export default function MainChatPage() {
         </div>
 
         {/* Input - Fixed at bottom on mobile */}
-        <div className="border-t border-white/10 bg-[#343541] flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="max-w-3xl mx-auto px-4 md:px-6 pt-3 md:pt-4 pb-3 md:pb-4">
-            <div className="relative bg-[#40414F] rounded-lg border border-black/10 shadow-lg">
+        <div className="border-t border-white/[0.08] bg-black/80 backdrop-blur-xl flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="max-w-3xl mx-auto px-4 md:px-6 pt-4 pb-4 md:pb-5">
+            <div className="relative bg-white/[0.05] rounded-2xl border border-white/[0.1] shadow-2xl shadow-black/20 backdrop-blur-sm">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder="Send a message..."
+                placeholder="Message Builder GPT..."
                 rows={1}
-                className="w-full px-4 py-3 pr-12 bg-transparent text-white placeholder-white/50 focus:outline-none resize-none text-base"
-                style={{ minHeight: '52px', maxHeight: '200px' }}
+                className="w-full px-4 py-3.5 pr-12 bg-transparent text-white/90 placeholder-white/40 focus:outline-none resize-none text-base leading-relaxed"
+                style={{ minHeight: '56px', maxHeight: '200px' }}
               />
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="absolute right-2 bottom-2 p-2 text-white/50 hover:text-white disabled:text-white/20 disabled:cursor-not-allowed transition-colors"
+                className={`absolute right-2 bottom-2 p-2.5 rounded-lg transition-all duration-200 active:scale-95 ${
+                  input.trim()
+                    ? 'bg-white text-black hover:bg-white/90 shadow-lg'
+                    : 'bg-white/10 text-white/30 cursor-not-allowed'
+                }`}
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"></path>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </button>
             </div>
-            <p className="text-xs text-white/40 mt-2 text-center hidden md:block">
+            <p className="text-xs text-white/30 mt-3 text-center hidden md:block">
               Builder GPT can make mistakes. Always verify important advice.
             </p>
           </div>
