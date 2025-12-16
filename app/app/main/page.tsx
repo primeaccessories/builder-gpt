@@ -851,7 +851,11 @@ export default function MainChatPage() {
                   ].map((example, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setInput(example.text)}
+                      onClick={async () => {
+                        const userMessage: Message = { role: 'user', content: example.text }
+                        setMessages((prev) => [...prev, userMessage])
+                        await sendMessage(example.text, [userMessage])
+                      }}
                       className="px-4 py-3.5 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.1] rounded-xl text-sm text-left transition-all duration-200 text-white/70 hover:text-white/90 hover:border-white/[0.15] active:scale-[0.98]"
                     >
                       <div className="text-sm leading-relaxed">{example.text}</div>
