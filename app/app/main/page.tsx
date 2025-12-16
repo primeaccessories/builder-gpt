@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 interface Message {
   role: 'user' | 'assistant'
   content: string
+  isTyping?: boolean
 }
 
 interface Conversation {
@@ -46,7 +47,10 @@ export default function MainChatPage() {
   const [chatToRename, setChatToRename] = useState<string | null>(null)
   const [newChatName, setNewChatName] = useState('')
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
+  const [typingMessageIndex, setTypingMessageIndex] = useState<number | null>(null)
+  const [displayedContent, setDisplayedContent] = useState<string>('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   // Set sidebar open on desktop by default
   useEffect(() => {
@@ -69,7 +73,52 @@ export default function MainChatPage() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, displayedContent])
+
+  // Typing animation effect
+  useEffect(() => {
+    if (typingMessageIndex === null) return
+
+    const message = messages[typingMessageIndex]
+    if (!message || message.role !== 'assistant' || !message.isTyping) return
+
+    const fullContent = message.content
+    let currentIndex = 0
+
+    // Clear any existing interval
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current)
+    }
+
+    setDisplayedContent('')
+
+    typingIntervalRef.current = setInterval(() => {
+      if (currentIndex < fullContent.length) {
+        setDisplayedContent(fullContent.slice(0, currentIndex + 1))
+        currentIndex++
+      } else {
+        // Typing complete
+        if (typingIntervalRef.current) {
+          clearInterval(typingIntervalRef.current)
+          typingIntervalRef.current = null
+        }
+        setTypingMessageIndex(null)
+        // Mark message as no longer typing
+        setMessages((prev) =>
+          prev.map((msg, idx) =>
+            idx === typingMessageIndex ? { ...msg, isTyping: false } : msg
+          )
+        )
+      }
+    }, 20) // 20ms per character for readable pace
+
+    return () => {
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current)
+        typingIntervalRef.current = null
+      }
+    }
+  }, [typingMessageIndex, messages])
 
   useEffect(() => {
     // Fetch user info
@@ -245,8 +294,13 @@ export default function MainChatPage() {
         const assistantMessage: Message = {
           role: 'assistant',
           content: data.response,
+          isTyping: true,
         }
-        setMessages((prev) => [...prev, assistantMessage])
+        setMessages((prev) => {
+          const newMessages = [...prev, assistantMessage]
+          setTypingMessageIndex(newMessages.length - 1)
+          return newMessages
+        })
 
         // If this is a new conversation, add it to the sidebar
         if (!currentConversationId && data.conversationId) {
@@ -311,7 +365,9 @@ export default function MainChatPage() {
       if (res.ok) {
         const data = await res.json()
         setCurrentConversationId(id)
-        setMessages(data.messages || [])
+        // Mark all loaded messages as not typing
+        const loadedMessages = (data.messages || []).map((msg: Message) => ({ ...msg, isTyping: false }))
+        setMessages(loadedMessages)
 
         // Close sidebar on mobile after selecting conversation
         if (window.innerWidth < 768) {
@@ -806,89 +862,82 @@ export default function MainChatPage() {
             )}
 
             {messages.map((msg, idx) => (
-              <>
-                {msg.role === 'assistant' && (
-                  <div key={idx} className="w-full text-white border-b border-black/10 bg-[#444654]">
-                    <div className="max-w-3xl mx-auto p-6 flex gap-6">
-                      <div className="w-8 h-8 flex-shrink-0">
-                        <div className="w-8 h-8 bg-[#19C37D] rounded-sm flex items-center justify-center">
-                          <span className="text-white text-xs font-semibold">AI</span>
-                        </div>
+              <div key={idx} className={`w-full border-b border-white/[0.05] ${
+                msg.role === 'assistant' ? 'bg-white/[0.02]' : ''
+              }`}>
+                <div className="max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-8 flex gap-4 md:gap-6">
+                  <div className="w-7 h-7 md:w-8 md:h-8 flex-shrink-0">
+                    {msg.role === 'assistant' ? (
+                      <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
                       </div>
-                      <div className="flex-1 overflow-hidden">
-                        <div className="whitespace-pre-wrap text-base leading-7">
-                          {msg.content.split('\n').map((line, i) => {
-                            // Handle bullet points
-                            if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-                              return (
-                                <div key={i} className="mb-1">
-                                  <span>{line}</span>
-                                </div>
-                              )
-                            }
-                            // Handle numbered lists
-                            if (/^\d+\./.test(line.trim())) {
-                              return (
-                                <div key={i} className="mb-1">
-                                  <span>{line}</span>
-                                </div>
-                              )
-                            }
-                            // Handle bold text **text**
-                            if (line.includes('**')) {
-                              const parts = line.split(/(\*\*.*?\*\*)/)
-                              return (
-                                <p key={i} className="mb-2">
-                                  {parts.map((part, j) => {
-                                    if (part.startsWith('**') && part.endsWith('**')) {
-                                      return (
-                                        <strong key={j} className="font-semibold text-white">
-                                          {part.slice(2, -2)}
-                                        </strong>
-                                      )
-                                    }
-                                    return part
-                                  })}
-                                </p>
-                              )
-                            }
-                            // Regular paragraph
-                            if (line.trim()) {
-                              return <p key={i} className="mb-2">{line}</p>
-                            }
-                            return <br key={i} />
-                          })}
-                        </div>
+                    ) : (
+                      <div className="w-7 h-7 md:w-8 md:h-8 bg-white/10 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-semibold">{userName.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 overflow-hidden pt-1">
+                    <div className="prose prose-invert max-w-none">
+                      <div className="text-[15px] leading-7 text-white/90">
+                        {(msg.role === 'assistant' && msg.isTyping && idx === typingMessageIndex ? displayedContent + '▋' : msg.content).split('\n').map((line, i) => {
+                          // Handle bullet points
+                          if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                            return (
+                              <div key={i} className="ml-4 mb-2">
+                                {line}
+                              </div>
+                            )
+                          }
+                          // Handle numbered lists
+                          if (/^\d+\./.test(line.trim())) {
+                            return (
+                              <div key={i} className="ml-4 mb-2">
+                                {line}
+                              </div>
+                            )
+                          }
+                          // Handle bold text **text**
+                          if (line.includes('**')) {
+                            const parts = line.split(/(\*\*.*?\*\*)/)
+                            return (
+                              <p key={i} className="mb-4">
+                                {parts.map((part, j) => {
+                                  if (part.startsWith('**') && part.endsWith('**')) {
+                                    return (
+                                      <strong key={j} className="font-semibold text-white">
+                                        {part.slice(2, -2)}
+                                      </strong>
+                                    )
+                                  }
+                                  return part
+                                })}
+                              </p>
+                            )
+                          }
+                          // Regular paragraph
+                          if (line.trim()) {
+                            return <p key={i} className="mb-4 last:mb-0">{line}</p>
+                          }
+                          return null
+                        })}
                       </div>
                     </div>
                   </div>
-                )}
-
-                {msg.role === 'user' && (
-                  <div key={idx} className="w-full text-white border-b border-black/10 bg-[#343541]">
-                    <div className="max-w-3xl mx-auto p-6 flex gap-6">
-                      <div className="w-8 h-8 flex-shrink-0">
-                        <div className="w-8 h-8 bg-[#5436DA] rounded-sm flex items-center justify-center">
-                          <span className="text-white text-xs font-semibold">{userName.charAt(0).toUpperCase()}</span>
-                        </div>
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <div className="whitespace-pre-wrap text-base leading-7">
-                          {msg.content}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
+                </div>
+              </div>
             ))}
 
             {isLoading && (
-              <div className="w-full text-white border-b border-black/10 bg-[#444654]">
-                <div className="max-w-3xl mx-auto p-6 flex gap-6">
-                  <div className="w-8 h-8 flex-shrink-0">
-                    <div className="w-8 h-8 bg-[#19C37D] rounded-sm flex items-center justify-center">
-                      <span className="text-white text-xs font-semibold">AI</span>
+              <div className="w-full border-b border-white/[0.05] bg-white/[0.02]">
+                <div className="max-w-3xl mx-auto px-4 md:px-6 py-6 md:py-8 flex gap-4 md:gap-6">
+                  <div className="w-7 h-7 md:w-8 md:h-8 flex-shrink-0">
+                    <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
                     </div>
                   </div>
                   <div className="flex-1 overflow-hidden pt-1">
