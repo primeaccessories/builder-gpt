@@ -10,6 +10,7 @@ datasource db {
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
+  password      String?
   name          String?
   plan          Plan           @default(SOLO)
   stripeCustomerId String?     @unique
