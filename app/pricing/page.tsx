@@ -56,7 +56,7 @@ export default function PricingPage() {
                 href="/signup?plan=solo"
                 className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl transition-all font-medium"
               >
-                Start free trial
+                Start 7-day free trial
               </Link>
             </div>
 
@@ -92,7 +92,7 @@ export default function PricingPage() {
                 href="/signup?plan=small_firm"
                 className="block w-full text-center px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl transition-all font-semibold hover:scale-105"
               >
-                Start free trial
+                Start 7-day free trial
               </Link>
             </div>
 
@@ -125,7 +125,7 @@ export default function PricingPage() {
                 href="/signup?plan=pro"
                 className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl transition-all font-medium"
               >
-                Start free trial
+                Start 7-day free trial
               </Link>
             </div>
           </div>

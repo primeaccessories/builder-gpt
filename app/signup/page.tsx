@@ -24,22 +24,37 @@ function SignupForm() {
       return
     }
 
-    const res = await fetch('/api/auth/signup', {
+    // First, create the user account
+    const signupRes = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, plan }),
     })
 
-    const data = await res.json()
+    const signupData = await signupRes.json()
 
-    if (res.ok) {
-      // Redirect to dashboard or app
-      window.location.href = '/app'
-    } else {
-      setError(data.error || 'Something went wrong. Please try again.')
+    if (!signupRes.ok) {
+      setError(signupData.error || 'Failed to create account')
+      setIsLoading(false)
+      return
     }
 
-    setIsLoading(false)
+    // Then create Stripe checkout session
+    const checkoutRes = await fetch('/api/stripe/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, email }),
+    })
+
+    const checkoutData = await checkoutRes.json()
+
+    if (checkoutRes.ok && checkoutData.url) {
+      // Redirect to Stripe Checkout
+      window.location.href = checkoutData.url
+    } else {
+      setError('Failed to start checkout. Please try again.')
+      setIsLoading(false)
+    }
   }
 
   const getPlanName = () => {
