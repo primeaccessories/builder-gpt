@@ -157,7 +157,7 @@ export default function LandingPage() {
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all">
             <h3 className="text-2xl font-bold mb-2">Solo Builder</h3>
             <div className="mb-6">
-              <span className="text-5xl font-bold">£29</span>
+              <span className="text-5xl font-bold">£15</span>
               <span className="text-white/40 text-lg">/month</span>
             </div>
             <ul className="space-y-3 mb-8">
@@ -189,7 +189,7 @@ export default function LandingPage() {
             </div>
             <h3 className="text-2xl font-bold mb-2">Small Firm</h3>
             <div className="mb-6">
-              <span className="text-5xl font-bold">£79</span>
+              <span className="text-5xl font-bold">£29</span>
               <span className="text-white/40 text-lg">/month</span>
             </div>
             <ul className="space-y-3 mb-8">
@@ -222,7 +222,7 @@ export default function LandingPage() {
           <div className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-white/20 transition-all">
             <h3 className="text-2xl font-bold mb-2">Pro</h3>
             <div className="mb-6">
-              <span className="text-5xl font-bold">£149</span>
+              <span className="text-5xl font-bold">£49</span>
               <span className="text-white/40 text-lg">/month</span>
             </div>
             <ul className="space-y-3 mb-8">
