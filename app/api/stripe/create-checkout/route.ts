@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
   try {
     const { plan, email } = await request.json()
 
+    console.log('Checkout request:', { plan, email })
+
     if (!plan || !email) {
       return NextResponse.json(
         { error: 'Plan and email required' },
@@ -27,6 +29,9 @@ export async function POST(request: NextRequest) {
     }
 
     const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS]
+
+    console.log('Price ID lookup:', { plan, priceId })
+    console.log('Available price IDs:', PRICE_IDS)
 
     if (!priceId) {
       return NextResponse.json(
@@ -60,10 +65,11 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json({ sessionId: session.id, url: session.url })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Stripe checkout error:', error)
+    console.error('Error details:', error.message, error.type)
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to create checkout session', details: error.message },
       { status: 500 }
     )
   }
