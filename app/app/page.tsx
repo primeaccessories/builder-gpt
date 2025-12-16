@@ -56,6 +56,8 @@ export default function IssueSelectorPage() {
     const welcomeSeen = localStorage.getItem('builder-gpt-welcome-seen')
     if (!welcomeSeen) {
       router.push('/app/welcome')
+    } else {
+      router.push('/app/main')
     }
   }, [router])
 

@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
       message,
       jobContext,
       conversationHistory = [],
+      conversationId,
     } = body
 
     // Tier enforcement: Job context only for SMALL_FIRM and PRO
@@ -97,16 +98,21 @@ export async function POST(request: NextRequest) {
     const assistantResponse = completion.choices[0]?.message?.content || 'Sorry, I couldn\'t generate a response.'
 
     // Save conversation for SMALL_FIRM and PRO plans
+    let savedConversationId = conversationId
     if (canUseHistory) {
-      // Find or create conversation
-      let conversation = await prisma.conversation.findFirst({
-        where: {
-          userId: user.id,
-          issueType: issueType.toUpperCase(),
-        },
-        orderBy: { createdAt: 'desc' },
-      })
+      let conversation
 
+      // If conversationId provided, use that one
+      if (conversationId) {
+        conversation = await prisma.conversation.findFirst({
+          where: {
+            id: conversationId,
+            userId: user.id,
+          },
+        })
+      }
+
+      // If no conversation found, create new one
       if (!conversation) {
         conversation = await prisma.conversation.create({
           data: {
@@ -114,6 +120,7 @@ export async function POST(request: NextRequest) {
             issueType: issueType.toUpperCase(),
           },
         })
+        savedConversationId = conversation.id
       }
 
       // Save messages
@@ -135,7 +142,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    return NextResponse.json({ response: assistantResponse })
+    return NextResponse.json({
+      response: assistantResponse,
+      conversationId: savedConversationId,
+    })
   } catch (error) {
     console.error('Chat error:', error)
     return NextResponse.json(

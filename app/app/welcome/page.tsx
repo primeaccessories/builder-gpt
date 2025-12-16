@@ -39,7 +39,7 @@ export default function WelcomePage() {
   const handleGetStarted = () => {
     // Mark welcome as seen
     localStorage.setItem('builder-gpt-welcome-seen', 'true')
-    router.push('/app')
+    router.push('/app/main')
   }
 
   if (isLoading) {
