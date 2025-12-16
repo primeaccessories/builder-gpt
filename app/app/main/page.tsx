@@ -7,6 +7,7 @@ interface Message {
   role: 'user' | 'assistant'
   content: string
   isTyping?: boolean
+  images?: string[]
 }
 
 interface Conversation {
@@ -42,8 +43,12 @@ export default function MainChatPage() {
   const [showHeaderMenu, setShowHeaderMenu] = useState(false)
   const [typingMessageIndex, setTypingMessageIndex] = useState<number | null>(null)
   const [displayedContent, setDisplayedContent] = useState<string>('')
+  const [selectedImages, setSelectedImages] = useState<File[]>([])
+  const [isDragging, setIsDragging] = useState(false)
+  const [showImagePicker, setShowImagePicker] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Lock page scrolling on chat page only
   useEffect(() => {
@@ -257,12 +262,28 @@ export default function MainChatPage() {
   }
 
   const handleSend = async () => {
-    if (!input.trim()) return
+    if (!input.trim() && selectedImages.length === 0) return
 
-    const userMessage: Message = { role: 'user', content: input }
+    // Convert images to base64
+    const imageUrls: string[] = []
+    for (const file of selectedImages) {
+      const reader = new FileReader()
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = (e) => resolve(e.target?.result as string)
+        reader.readAsDataURL(file)
+      })
+      imageUrls.push(base64)
+    }
+
+    const userMessage: Message = {
+      role: 'user',
+      content: input || 'Sent images',
+      images: imageUrls.length > 0 ? imageUrls : undefined
+    }
     setMessages((prev) => [...prev, userMessage])
     const messageToSend = input
     setInput('')
+    setSelectedImages([])
 
     await sendMessage(messageToSend, [...messages, userMessage])
   }
@@ -339,6 +360,34 @@ export default function MainChatPage() {
       e.preventDefault()
       handleSend()
     }
+  }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    const imageFiles = files.filter(file => file.type.startsWith('image/'))
+    setSelectedImages(prev => [...prev, ...imageFiles].slice(0, 4)) // Max 4 images
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const files = Array.from(e.dataTransfer.files)
+    const imageFiles = files.filter(file => file.type.startsWith('image/'))
+    setSelectedImages(prev => [...prev, ...imageFiles].slice(0, 4)) // Max 4 images
+  }
+
+  const removeImage = (index: number) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleLogout = async () => {
@@ -440,9 +489,16 @@ export default function MainChatPage() {
               </button>
 
               {/* 3-dot menu */}
-              <div className={`absolute right-2 top-1/2 -translate-y-1/2 transition-opacity ${
-                activeChatMenu === conv.id ? 'opacity-100' : 'opacity-0 group-hover/chat:opacity-100'
-              }`}>
+              <div
+                className={`absolute right-2 top-1/2 -translate-y-1/2 transition-opacity ${
+                  activeChatMenu === conv.id ? 'opacity-100' : 'opacity-0 group-hover/chat:opacity-100'
+                }`}
+                onMouseLeave={() => {
+                  if (activeChatMenu === conv.id) {
+                    setActiveChatMenu(null)
+                  }
+                }}
+              >
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -457,9 +513,7 @@ export default function MainChatPage() {
 
                 {/* Dropdown menu */}
                 {activeChatMenu === conv.id && (
-                  <div className="absolute right-0 top-full mt-1 bg-[#1a1a1a] border border-white/[0.1] rounded-lg shadow-2xl py-1 min-w-[160px] z-50"
-                    onMouseLeave={() => setActiveChatMenu(null)}
-                  >
+                  <div className="absolute right-0 top-full mt-1 bg-[#1a1a1a] border border-white/[0.1] rounded-lg shadow-2xl py-1 min-w-[160px] z-50">
                     <button
                       onClick={() => openRenameChat(conv.id)}
                       className="w-full px-3 py-2 text-left text-xs text-white/70 hover:bg-white/[0.08] hover:text-white transition-colors flex items-center gap-2"
@@ -644,7 +698,7 @@ export default function MainChatPage() {
                     <button
                       key={idx}
                       onClick={async () => {
-                        const userMessage: Message = { role: 'user', content: example.text }
+                        const userMessage: Message = { role: 'user', content: example.text, images: undefined }
                         setMessages((prev) => [...prev, userMessage])
                         await sendMessage(example.text, [userMessage])
                       }}
@@ -676,6 +730,20 @@ export default function MainChatPage() {
                     )}
                   </div>
                   <div className="flex-1 overflow-hidden pt-1">
+                    {/* Display images if present */}
+                    {msg.images && msg.images.length > 0 && (
+                      <div className="mb-3 flex gap-2 flex-wrap">
+                        {msg.images.map((imgUrl, imgIdx) => (
+                          <img
+                            key={imgIdx}
+                            src={imgUrl}
+                            alt={`Uploaded ${imgIdx + 1}`}
+                            className="max-w-[200px] md:max-w-[300px] rounded-lg border border-white/[0.1] cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => window.open(imgUrl, '_blank')}
+                          />
+                        ))}
+                      </div>
+                    )}
                     <div className="prose prose-invert max-w-none">
                       <div className="text-[15px] leading-7 text-white/90">
                         {(msg.role === 'assistant' && msg.isTyping && idx === typingMessageIndex ? displayedContent + '▋' : msg.content).split('\n').map((line, i) => {
@@ -753,32 +821,95 @@ export default function MainChatPage() {
 
         {/* Input - Fixed at bottom on mobile */}
         <div className="bg-black flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="max-w-3xl mx-auto px-4 md:px-6 pt-4 pb-4 md:pb-5">
-            <div className="relative bg-white/[0.05] rounded-2xl border border-white/[0.1] shadow-2xl shadow-black/20 backdrop-blur-sm">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Message Builder GPT..."
-                rows={1}
-                className="w-full px-4 py-3.5 pr-12 bg-transparent text-white/90 placeholder-white/40 focus:outline-none resize-none text-base leading-relaxed"
-                style={{ minHeight: '56px', maxHeight: '200px' }}
-              />
-              <button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                className={`absolute right-2 bottom-2 p-2.5 rounded-lg transition-all duration-200 active:scale-95 ${
-                  input.trim()
-                    ? 'bg-white text-black hover:bg-white/90 shadow-lg'
-                    : 'bg-white/10 text-white/30 cursor-not-allowed'
-                }`}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
+          <div className="max-w-3xl mx-auto px-3 md:px-4 pt-2 pb-3 md:pb-4">
+            {/* Selected Images Preview */}
+            {selectedImages.length > 0 && (
+              <div className="mb-2 flex gap-2 flex-wrap">
+                {selectedImages.map((file, idx) => (
+                  <div key={idx} className="relative group">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`Selected ${idx + 1}`}
+                      className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg border border-white/[0.1]"
+                    />
+                    <button
+                      onClick={() => removeImage(idx)}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div
+              className={`relative bg-white/[0.05] rounded-xl border shadow-lg shadow-black/10 backdrop-blur-sm transition-all ${
+                isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-white/[0.1]'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <div className="flex items-end gap-1 md:gap-2">
+                {/* Image Upload Button */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-shrink-0 p-2 md:p-2.5 hover:bg-white/[0.08] rounded-lg transition-colors text-white/50 hover:text-white/90 ml-1 mb-1"
+                  aria-label="Upload image"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </button>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageSelect}
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                />
+
+                {/* Text Input */}
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Message Builder GPT..."
+                  rows={1}
+                  className="flex-1 px-2 md:px-3 py-2.5 md:py-3 bg-transparent text-white/90 placeholder-white/40 focus:outline-none resize-none text-sm md:text-base leading-relaxed"
+                  style={{ minHeight: '44px', maxHeight: '120px' }}
+                />
+
+                {/* Send Button */}
+                <button
+                  onClick={handleSend}
+                  disabled={isLoading || (!input.trim() && selectedImages.length === 0)}
+                  className={`flex-shrink-0 p-2 md:p-2.5 rounded-lg transition-all duration-200 active:scale-95 mr-1 mb-1 ${
+                    input.trim() || selectedImages.length > 0
+                      ? 'bg-white text-black hover:bg-white/90 shadow-md'
+                      : 'bg-white/10 text-white/30 cursor-not-allowed'
+                  }`}
+                >
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Drag and Drop Indicator */}
+              {isDragging && (
+                <div className="absolute inset-0 bg-blue-500/20 backdrop-blur-sm rounded-xl flex items-center justify-center pointer-events-none">
+                  <div className="text-blue-400 text-sm font-medium">Drop images here</div>
+                </div>
+              )}
             </div>
-            <p className="text-xs text-white/30 mt-3 text-center hidden md:block">
+
+            <p className="text-xs text-white/30 mt-2 text-center hidden md:block">
               Builder GPT can make mistakes. Always verify important advice.
             </p>
           </div>
