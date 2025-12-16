@@ -220,7 +220,7 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="h-screen bg-[#343541] flex overflow-hidden relative">
+    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden">
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -373,7 +373,7 @@ export default function MainChatPage() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden -webkit-overflow-scrolling-touch">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
               <div className="text-center py-12">

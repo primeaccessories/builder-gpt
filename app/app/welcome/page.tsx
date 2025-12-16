@@ -54,7 +54,7 @@ export default function WelcomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4 py-6 md:px-6">
+    <div className="fixed inset-0 bg-bg-primary flex items-center justify-center px-4 py-6 md:px-6 overflow-hidden">
       <div className="max-w-2xl w-full text-center">
         {/* Greeting */}
         <div className="mb-6 md:mb-12">
