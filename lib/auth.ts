@@ -37,12 +37,29 @@ export function verifyMagicLink(token: string): string | null {
 export async function getUserFromRequest(
   request: Request
 ): Promise<{ userId: string; email: string } | null> {
+  // Try to get token from Authorization header first
   const authHeader = request.headers.get('Authorization')
-  if (!authHeader?.startsWith('Bearer ')) return null
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.substring(7)
+    const payload = verifyToken(token)
+    if (payload) return { userId: payload.userId, email: payload.email }
+  }
 
-  const token = authHeader.substring(7)
-  const payload = verifyToken(token)
-  if (!payload) return null
+  // Try to get token from cookies
+  const cookieHeader = request.headers.get('cookie')
+  if (cookieHeader) {
+    const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+      const [key, value] = cookie.trim().split('=')
+      acc[key] = value
+      return acc
+    }, {} as Record<string, string>)
 
-  return { userId: payload.userId, email: payload.email }
+    const token = cookies['auth-token']
+    if (token) {
+      const payload = verifyToken(token)
+      if (payload) return { userId: payload.userId, email: payload.email }
+    }
+  }
+
+  return null
 }
