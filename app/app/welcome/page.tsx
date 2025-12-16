@@ -54,34 +54,34 @@ export default function WelcomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-primary flex items-center justify-center px-6">
+    <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4 py-6 md:px-6">
       <div className="max-w-2xl w-full text-center">
         {/* Greeting */}
-        <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">
+        <div className="mb-6 md:mb-12">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4">
             Hello {userName}! 👋
           </h1>
-          <p className="text-2xl text-text-secondary mb-2">
+          <p className="text-lg md:text-2xl text-text-secondary mb-1 md:mb-2">
             Welcome to Builder GPT
           </p>
-          <p className="text-lg text-text-muted">
+          <p className="text-sm md:text-lg text-text-muted">
             Know what to say. Right now.
           </p>
         </div>
 
         {/* What it helps with */}
-        <div className="bg-bg-secondary border border-border-subtle rounded-2xl p-8 mb-10">
-          <h2 className="text-xl font-semibold mb-6 text-text-primary">
+        <div className="bg-bg-secondary border border-border-subtle rounded-xl md:rounded-2xl p-4 md:p-8 mb-6 md:mb-10">
+          <h2 className="text-base md:text-xl font-semibold mb-4 md:mb-6 text-text-primary">
             When you need clarity fast:
           </h2>
-          <div className="grid md:grid-cols-2 gap-4 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-left">
             {FEATURES.map((feature, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-3 text-text-secondary"
+                className="flex items-start gap-2 md:gap-3 text-text-secondary"
               >
-                <span className="text-2xl flex-shrink-0">{feature.emoji}</span>
-                <span className="text-base pt-1">{feature.text}</span>
+                <span className="text-xl md:text-2xl flex-shrink-0">{feature.emoji}</span>
+                <span className="text-sm md:text-base pt-0.5 md:pt-1">{feature.text}</span>
               </div>
             ))}
           </div>
@@ -90,12 +90,12 @@ export default function WelcomePage() {
         {/* CTA */}
         <button
           onClick={handleGetStarted}
-          className="px-10 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-lg font-semibold rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-500/25"
+          className="w-full md:w-auto px-8 md:px-10 py-3 md:py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-base md:text-lg font-semibold rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-500/25"
         >
           Get started
         </button>
 
-        <p className="text-sm text-text-muted mt-6">
+        <p className="text-xs md:text-sm text-text-muted mt-4 md:mt-6">
           Just start typing your situation
         </p>
       </div>

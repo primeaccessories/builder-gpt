@@ -22,11 +22,26 @@ export default function MainChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false) // Hidden by default on mobile
   const [userName, setUserName] = useState('')
   const [userPlan, setUserPlan] = useState('')
   const [showUserMenu, setShowUserMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Set sidebar open on desktop by default
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true)
+      } else {
+        setSidebarOpen(false)
+      }
+    }
+
+    handleResize() // Set initial state
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -150,6 +165,11 @@ export default function MainChatPage() {
         const data = await res.json()
         setCurrentConversationId(id)
         setMessages(data.messages || [])
+
+        // Close sidebar on mobile after selecting conversation
+        if (window.innerWidth < 768) {
+          setSidebarOpen(false)
+        }
       }
     } catch (error) {
       console.error('Failed to load conversation:', error)
@@ -199,12 +219,22 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="h-screen bg-[#343541] flex overflow-hidden">
+    <div className="h-screen bg-[#343541] flex overflow-hidden relative">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <div
         className={`${
-          sidebarOpen ? 'w-[260px]' : 'w-0'
-        } bg-[#202123] flex-shrink-0 transition-all duration-200 overflow-hidden flex flex-col`}
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        } ${
+          sidebarOpen ? 'w-[260px]' : 'w-0 md:w-[260px]'
+        } bg-[#202123] flex-shrink-0 transition-all duration-200 overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Sidebar Header */}
         <div className="p-2">
@@ -295,26 +325,24 @@ export default function MainChatPage() {
         {/* Header */}
         <header className="flex-shrink-0 bg-[#343541] border-b border-white/10">
           <div className="px-4 py-3 flex items-center gap-2">
-            {!sidebarOpen && (
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-white/10 rounded-md transition-colors text-white"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-            )}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-white/10 rounded-md transition-colors text-white"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <div className="flex-1 text-center">
               <div className="text-sm font-semibold text-white">Builder GPT</div>
             </div>
-            <div className="w-5"></div>
+            <div className="w-9"></div> {/* Balance the hamburger button */}
           </div>
         </header>
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-6 py-8">
+          <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8">
             {messages.length === 0 && (
               <div className="text-center py-12">
                 <h2 className="text-3xl font-semibold mb-10 text-white">
@@ -446,7 +474,7 @@ export default function MainChatPage() {
 
         {/* Input */}
         <div className="border-t border-white/10 bg-[#343541] flex-shrink-0">
-          <div className="max-w-3xl mx-auto px-6 py-4">
+          <div className="max-w-3xl mx-auto px-4 md:px-6 py-3 md:py-4">
             <div className="relative bg-[#40414F] rounded-lg border border-black/10 shadow-lg">
               <textarea
                 value={input}
