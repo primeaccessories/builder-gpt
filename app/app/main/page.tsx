@@ -53,8 +53,21 @@ export default function MainChatPage() {
   // Lock page scrolling on chat page only
   useEffect(() => {
     document.body.classList.add('chat-page')
+
+    // Fix mobile viewport height
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+
+    setVH()
+    window.addEventListener('resize', setVH)
+    window.addEventListener('orientationchange', setVH)
+
     return () => {
       document.body.classList.remove('chat-page')
+      window.removeEventListener('resize', setVH)
+      window.removeEventListener('orientationchange', setVH)
     }
   }, [])
 
@@ -413,7 +426,11 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden" style={{ height: '100vh', width: '100vw' }}>
+    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden" style={{
+      height: 'calc(var(--vh, 1vh) * 100)',
+      width: '100vw',
+      minHeight: '-webkit-fill-available'
+    }}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -835,7 +852,11 @@ export default function MainChatPage() {
         </div>
 
         {/* Input - Fixed at bottom */}
-        <div className="bg-black flex-shrink-0 border-t border-white/[0.05]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="bg-black flex-shrink-0 border-t border-white/[0.05]" style={{
+          paddingBottom: 'max(env(safe-area-inset-bottom), 12px)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)'
+        }}>
           <div className="max-w-3xl mx-auto px-3 md:px-4 pt-2 pb-3 md:pb-4">
             {/* Selected Images Preview */}
             {selectedImages.length > 0 && (

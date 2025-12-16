@@ -18,6 +18,24 @@ body {
 
 html {
   scroll-behavior: smooth;
+  height: -webkit-fill-available;
+}
+
+/* Fix mobile viewport height - supports all browsers */
+:root {
+  --vh: 1vh;
+}
+
+@supports (height: 100dvh) {
+  html {
+    height: 100dvh;
+  }
+}
+
+@supports not (height: 100dvh) {
+  html {
+    height: calc(var(--vh, 1vh) * 100);
+  }
 }
 
 /* Lock scrolling only on chat pages */
@@ -26,16 +44,20 @@ body.chat-page {
   position: fixed !important;
   width: 100% !important;
   height: 100% !important;
+  height: -webkit-fill-available !important;
   overscroll-behavior: none !important;
   -webkit-overflow-scrolling: touch !important;
 }
 
+@supports (height: 100dvh) {
+  body.chat-page {
+    height: 100dvh !important;
+  }
+}
+
 html:has(body.chat-page) {
   overflow: hidden !important;
-  position: fixed !important;
   width: 100% !important;
-  height: 100% !important;
-  overscroll-behavior: none !important;
 }
 
 /* Custom scrollbar */
