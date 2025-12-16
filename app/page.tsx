@@ -46,16 +46,16 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
-        {/* Premium gradient orbs */}
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/30 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '6s' }} />
+        {/* Construction-themed gradient orbs - orange/amber tones */}
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-orange-500/30 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '6s' }} />
 
         <div className="container mx-auto max-w-6xl relative z-10 py-32">
           <div className="text-center space-y-12">
             {/* Headline with refined typography */}
             <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-[0.95] mb-8">
               <span className="block text-white/90">Clear advice.</span>
-              <span className="block bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-orange-200 via-amber-100 to-white/40 bg-clip-text text-transparent">
                 Real problems.
               </span>
             </h1>
@@ -74,12 +74,12 @@ export default function LandingPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="flex-1 px-6 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all duration-300 text-lg"
+                  className="flex-1 px-6 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:border-orange-400/50 focus:bg-white/10 transition-all duration-300 text-lg"
                 />
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-10 py-5 bg-white text-black font-semibold rounded-2xl transition-all duration-300 hover:bg-white/90 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-lg"
+                  className="px-10 py-5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold rounded-2xl transition-all duration-300 hover:from-orange-600 hover:to-amber-600 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-lg shadow-lg shadow-orange-500/20"
                 >
                   {isLoading ? 'Sending...' : 'Get started'}
                 </button>
@@ -87,13 +87,43 @@ export default function LandingPage() {
               <p className="text-sm text-white/40 mt-4">Start your free 7-day trial — no card required</p>
             </form>
 
-            {/* Minimal trust indicators */}
-            <div className="flex items-center justify-center gap-12 text-sm text-white/40 pt-12">
-              <span>UK focused</span>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>Plain English</span>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>Instant answers</span>
+            {/* Feature icons below CTA */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto pt-12">
+              <div className="flex flex-col items-center gap-3 group">
+                <div className="w-14 h-14 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 group-hover:border-orange-400/30 transition-all duration-300">
+                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                </div>
+                <span className="text-sm text-white/60 font-medium">Payment issues</span>
+              </div>
+
+              <div className="flex flex-col items-center gap-3 group">
+                <div className="w-14 h-14 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 group-hover:border-orange-400/30 transition-all duration-300">
+                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <span className="text-sm text-white/60 font-medium">Job delays</span>
+              </div>
+
+              <div className="flex flex-col items-center gap-3 group">
+                <div className="w-14 h-14 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 group-hover:border-orange-400/30 transition-all duration-300">
+                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                  </svg>
+                </div>
+                <span className="text-sm text-white/60 font-medium">Difficult clients</span>
+              </div>
+
+              <div className="flex flex-col items-center gap-3 group">
+                <div className="w-14 h-14 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center group-hover:bg-white/10 group-hover:border-orange-400/30 transition-all duration-300">
+                  <svg className="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <span className="text-sm text-white/60 font-medium">Disputes</span>
+              </div>
             </div>
           </div>
         </div>
