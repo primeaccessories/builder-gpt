@@ -222,10 +222,12 @@ export default function MainChatPage() {
         {/* Conversations List */}
         <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
           {conversations.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-3">💬</div>
-              <p className="text-text-muted text-sm">
-                Your chats will appear here
+            <div className="text-center py-16 px-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
+                <div className="text-3xl">💬</div>
+              </div>
+              <p className="text-text-muted text-sm leading-relaxed">
+                Your conversations<br/>will appear here
               </p>
             </div>
           )}
@@ -332,12 +334,16 @@ export default function MainChatPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-6 py-8">
             {messages.length === 0 && (
-              <div className="text-center py-16">
-                <div className="mb-8">
-                  <div className="text-6xl mb-4">🏗️</div>
-                  <h2 className="text-3xl font-bold mb-3">How can I help you today?</h2>
-                  <p className="text-text-secondary text-lg">
-                    Ask me about payments, disputes, pricing, or any building-related issue
+              <div className="text-center py-20 animate-fade-in">
+                <div className="mb-12">
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 backdrop-blur-xl border border-white/10">
+                    <div className="text-5xl">🏗️</div>
+                  </div>
+                  <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+                    How can I help you today?
+                  </h2>
+                  <p className="text-text-secondary text-lg leading-relaxed max-w-md mx-auto">
+                    Expert AI guidance for UK construction professionals
                   </p>
                 </div>
 
@@ -354,11 +360,18 @@ export default function MainChatPage() {
                     <button
                       key={idx}
                       onClick={() => setInput(example.text)}
-                      className="px-5 py-4 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-blue-500/50 rounded-2xl text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group hover:shadow-lg hover:shadow-blue-500/10"
+                      className="relative px-6 py-5 bg-gradient-to-br from-white/5 via-white/3 to-transparent border border-white/10 hover:border-blue-500/40 rounded-2xl text-sm text-left transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group hover:shadow-xl hover:shadow-blue-500/10 backdrop-blur-sm overflow-hidden"
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">{example.icon}</span>
-                        <span className="text-text-secondary group-hover:text-white transition-colors leading-relaxed">"{example.text}"</span>
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-300"></div>
+                      <div className="relative flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center flex-shrink-0 border border-white/5 group-hover:scale-110 transition-transform duration-300">
+                          <span className="text-2xl">{example.icon}</span>
+                        </div>
+                        <div className="flex-1 pt-1">
+                          <span className="text-white/70 group-hover:text-white transition-colors duration-300 leading-relaxed block text-[15px]">
+                            {example.text}
+                          </span>
+                        </div>
                       </div>
                     </button>
                   ))}
@@ -374,13 +387,13 @@ export default function MainChatPage() {
                 }`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="flex gap-4 w-full">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
+                  <div className="flex gap-5 w-full animate-fade-in">
+                    <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25">
                       <span className="text-white text-sm font-bold">AI</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="prose prose-invert max-w-none">
-                        <div className="whitespace-pre-wrap leading-relaxed text-text-primary">
+                        <div className="whitespace-pre-wrap leading-[1.7] text-[15px] text-white/90">
                           {msg.content.split('\n').map((line, i) => {
                             // Handle bullet points
                             if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
@@ -457,8 +470,8 @@ export default function MainChatPage() {
                 )}
 
                 {msg.role === 'user' && (
-                  <div className="bg-bg-elevated rounded-2xl px-5 py-3 max-w-2xl">
-                    <div className="whitespace-pre-wrap leading-relaxed text-text-primary">
+                  <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/20 rounded-2xl px-6 py-4 max-w-2xl shadow-lg animate-fade-in backdrop-blur-sm">
+                    <div className="whitespace-pre-wrap leading-[1.7] text-[15px] text-white">
                       {msg.content}
                     </div>
                   </div>
@@ -467,15 +480,18 @@ export default function MainChatPage() {
             ))}
 
             {isLoading && (
-              <div className="flex gap-4 max-w-3xl">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
+              <div className="flex gap-5 max-w-3xl animate-fade-in">
+                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25 animate-pulse-slow">
                   <span className="text-white text-sm font-bold">AI</span>
                 </div>
-                <div className="flex-1 pt-1">
-                  <div className="flex gap-2">
-                    <span className="w-2 h-2 bg-text-muted rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-2 h-2 bg-text-muted rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-2 h-2 bg-text-muted rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                <div className="flex-1 pt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    </div>
+                    <span className="text-sm text-text-muted ml-2">Thinking...</span>
                   </div>
                 </div>
               </div>

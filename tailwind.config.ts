@@ -61,9 +61,10 @@ const config: Config = {
         'glow-purple': '0 0 20px rgba(99, 102, 241, 0.3)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.6s ease-out',
+        'fade-in': 'fadeIn 0.4s ease-out',
         'slide-up': 'slideUp 0.6s ease-out',
         'shimmer': 'shimmer 2s infinite linear',
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
