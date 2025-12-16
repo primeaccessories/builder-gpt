@@ -413,7 +413,7 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden">
+    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden" style={{ height: '100vh', width: '100vw' }}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -475,8 +475,8 @@ export default function MainChatPage() {
 
         {/* Conversations List */}
         <div className="flex-1 overflow-y-auto px-2 py-2" style={{
-          WebkitOverflowScrolling: 'auto',
-          overscrollBehavior: 'none',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
           scrollbarWidth: 'thin'
         }}>
           {conversations
@@ -600,9 +600,9 @@ export default function MainChatPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col bg-black overflow-hidden">
+      <div className="flex-1 flex flex-col bg-black overflow-hidden h-full">
         {/* Header */}
-        <header className="flex-shrink-0 bg-black/80 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-10">
+        <header className="flex-shrink-0 bg-black/80 backdrop-blur-xl border-b border-white/[0.08]">
           <div className="px-4 py-3.5 flex items-center gap-2">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -683,10 +683,8 @@ export default function MainChatPage() {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{
-          WebkitOverflowScrolling: 'auto',
-          overscrollBehavior: 'none',
-          overscrollBehaviorY: 'none',
-          touchAction: 'pan-y',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
           scrollbarWidth: 'thin'
         }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
@@ -836,8 +834,8 @@ export default function MainChatPage() {
           </div>
         </div>
 
-        {/* Input - Fixed at bottom on mobile */}
-        <div className="bg-black flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        {/* Input - Fixed at bottom */}
+        <div className="bg-black flex-shrink-0 border-t border-white/[0.05]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-3xl mx-auto px-3 md:px-4 pt-2 pb-3 md:pb-4">
             {/* Selected Images Preview */}
             {selectedImages.length > 0 && (
