@@ -440,7 +440,9 @@ export default function MainChatPage() {
               </button>
 
               {/* 3-dot menu */}
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/chat:opacity-100 transition-opacity">
+              <div className={`absolute right-2 top-1/2 -translate-y-1/2 transition-opacity ${
+                activeChatMenu === conv.id ? 'opacity-100' : 'opacity-0 group-hover/chat:opacity-100'
+              }`}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
@@ -455,7 +457,9 @@ export default function MainChatPage() {
 
                 {/* Dropdown menu */}
                 {activeChatMenu === conv.id && (
-                  <div className="absolute right-0 top-full mt-1 bg-[#1a1a1a] border border-white/[0.1] rounded-lg shadow-2xl py-1 min-w-[160px] z-50">
+                  <div className="absolute right-0 top-full mt-1 bg-[#1a1a1a] border border-white/[0.1] rounded-lg shadow-2xl py-1 min-w-[160px] z-50"
+                    onMouseLeave={() => setActiveChatMenu(null)}
+                  >
                     <button
                       onClick={() => openRenameChat(conv.id)}
                       className="w-full px-3 py-2 text-left text-xs text-white/70 hover:bg-white/[0.08] hover:text-white transition-colors flex items-center gap-2"
@@ -540,15 +544,15 @@ export default function MainChatPage() {
               className="p-2 hover:bg-white/[0.08] rounded-full transition-all duration-200 text-white/70 hover:text-white active:scale-95"
               aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              {sidebarOpen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
+              {/* Mobile: Hamburger menu */}
+              <svg className="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+
+              {/* Desktop: Minimize icon (always shows <<) */}
+              <svg className="w-5 h-5 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
             </button>
             <div className="flex-1 text-center">
               <div className="text-sm font-semibold text-white/90">Builder GPT</div>
