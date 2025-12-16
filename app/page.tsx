@@ -65,25 +65,20 @@ export default function LandingPage() {
           Get instant expert guidance on payments, difficult customers, pricing, disputes, and everything in between.
         </p>
 
-        <form onSubmit={handleGetStarted} className="max-w-xl mx-auto mb-6">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              className="flex-1 px-6 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-orange-400/50 focus:bg-white/10 transition-all text-lg"
-            />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold rounded-xl transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 text-lg shadow-lg shadow-orange-500/25"
-            >
-              {isLoading ? 'Sending...' : 'Get started free'}
-            </button>
-          </div>
-        </form>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+          <Link
+            href="/signup"
+            className="px-10 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold rounded-xl transition-all hover:scale-105 text-lg shadow-lg shadow-orange-500/25"
+          >
+            Get started free
+          </Link>
+          <Link
+            href="/login"
+            className="px-10 py-4 bg-white/5 border border-white/20 hover:bg-white/10 hover:border-white/30 text-white font-semibold rounded-xl transition-all text-lg"
+          >
+            Log in
+          </Link>
+        </div>
         <p className="text-sm text-white/40">7-day free trial · No credit card required</p>
       </section>
 
