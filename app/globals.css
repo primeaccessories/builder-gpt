@@ -27,7 +27,8 @@ body.chat-page {
   width: 100%;
   height: 100%;
   overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
 }
 
 html:has(body.chat-page) {
@@ -36,6 +37,7 @@ html:has(body.chat-page) {
   width: 100%;
   height: 100%;
   overscroll-behavior: none;
+  touch-action: none;
 }
 
 /* Custom scrollbar */
@@ -56,14 +58,28 @@ html:has(body.chat-page) {
   background: #444444;
 }
 
-/* Smooth transitions */
+/* Smooth transitions - Apple-like timing */
 * {
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Remove transitions on buttons for snappier feel */
+/* Refined transitions for interactive elements */
 button, a {
-  transition: all 0.15s ease;
+  transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent pull-to-refresh and overscroll */
+body {
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scroll with no bounce */
+* {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Gradient text */
@@ -107,14 +123,15 @@ button, a {
   box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
 }
 
-/* Hover lift */
+/* Hover lift - More subtle and refined */
 .hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 /* Focus styles */
@@ -124,9 +141,10 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Button press effect */
+/* Button press effect - More refined */
 button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+  transition: transform 0.08s cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 /* Shimmer animation */
@@ -150,11 +168,11 @@ button:active {
   background-size: 1000px 100%;
 }
 
-/* Fade in animation */
+/* Fade in animation - Apple-style easing */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -163,12 +181,27 @@ button:active {
 }
 
 .fade-in {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Stagger animation delays */
-.delay-1 { animation-delay: 0.1s; }
-.delay-2 { animation-delay: 0.2s; }
-.delay-3 { animation-delay: 0.3s; }
-.delay-4 { animation-delay: 0.4s; }
-.delay-5 { animation-delay: 0.5s; }
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+
+/* Apple-style smooth scrolling containers */
+.smooth-scroll {
+  -webkit-overflow-scrolling: auto;
+  overscroll-behavior: none;
+  scroll-behavior: smooth;
+}
+
+/* Prevent text selection during interactions */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}

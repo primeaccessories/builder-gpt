@@ -74,7 +74,11 @@ export default function MainChatPage() {
   }, [])
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+      inline: 'nearest'
+    })
   }
 
   useEffect(() => {
@@ -424,7 +428,10 @@ export default function MainChatPage() {
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } ${
           sidebarOpen ? 'w-[260px]' : 'w-0 md:w-[260px]'
-        } bg-[#0D0D0D] flex-shrink-0 transition-all duration-300 ease-out overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto border-r border-white/[0.08]`}
+        } bg-[#0D0D0D] flex-shrink-0 overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto border-r border-white/[0.08]`}
+        style={{
+          transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
       >
         {/* Sidebar Header */}
         <div className="p-3 space-y-2.5">
@@ -467,7 +474,11 @@ export default function MainChatPage() {
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto px-2 py-2">
+        <div className="flex-1 overflow-y-auto px-2 py-2" style={{
+          WebkitOverflowScrolling: 'auto',
+          overscrollBehavior: 'none',
+          scrollbarWidth: 'thin'
+        }}>
           {conversations
             .filter((conv) => searchQuery ? conv.name.toLowerCase().includes(searchQuery.toLowerCase()) : true)
             .map((conv) => (
@@ -671,7 +682,13 @@ export default function MainChatPage() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
+        <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{
+          WebkitOverflowScrolling: 'auto',
+          overscrollBehavior: 'none',
+          overscrollBehaviorY: 'none',
+          touchAction: 'pan-y',
+          scrollbarWidth: 'thin'
+        }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
               <div className="text-center py-12 px-4">
@@ -846,9 +863,12 @@ export default function MainChatPage() {
             )}
 
             <div
-              className={`relative bg-white/[0.05] rounded-xl border shadow-lg shadow-black/10 backdrop-blur-sm transition-all ${
+              className={`relative bg-white/[0.05] rounded-xl border shadow-lg shadow-black/10 backdrop-blur-sm ${
                 isDragging ? 'border-blue-500 bg-blue-500/10' : 'border-white/[0.1]'
               }`}
+              style={{
+                transition: 'border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
