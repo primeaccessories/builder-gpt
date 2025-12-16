@@ -107,7 +107,9 @@ export default function MainChatPage() {
 
     setProjects([newProject, ...projects])
     setCurrentProjectId(newProject.id)
-    setExpandedProjects(new Set([...expandedProjects, newProject.id]))
+    const newExpanded = new Set(expandedProjects)
+    newExpanded.add(newProject.id)
+    setExpandedProjects(newExpanded)
     setNewProjectName('')
     setShowNewProjectModal(false)
   }
