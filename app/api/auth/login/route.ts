@@ -39,14 +39,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check subscription status
-    if (user.subscriptionStatus !== 'active' && user.subscriptionStatus !== 'trialing') {
-      return NextResponse.json(
-        { error: 'No active subscription. Please subscribe to continue.' },
-        { status: 402 }
-      )
-    }
-
     // Create JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
