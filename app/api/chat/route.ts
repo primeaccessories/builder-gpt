@@ -7,9 +7,11 @@ import OpenAI from 'openai'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+function getOpenAIClient() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || 'sk-placeholder',
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -84,6 +86,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Call OpenAI
+    const openai = getOpenAIClient()
     const completion = await openai.chat.completions.create({
       model: 'gpt-4-turbo-preview',
       messages: messages as any,
