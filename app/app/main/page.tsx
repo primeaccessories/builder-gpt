@@ -59,12 +59,7 @@ export default function MainChatPage() {
     setMessages([])
   }
 
-  const handleSend = async () => {
-    if (!input.trim()) return
-
-    const userMessage: Message = { role: 'user', content: input }
-    setMessages((prev) => [...prev, userMessage])
-    setInput('')
+  const sendMessage = async (messageText: string, previousMessages: Message[] = messages) => {
     setIsLoading(true)
 
     try {
@@ -73,8 +68,8 @@ export default function MainChatPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           issueType: 'OTHER',
-          message: input,
-          conversationHistory: messages,
+          message: messageText,
+          conversationHistory: previousMessages,
           conversationId: currentConversationId,
         }),
       })
@@ -104,6 +99,32 @@ export default function MainChatPage() {
       setMessages((prev) => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleSend = async () => {
+    if (!input.trim()) return
+
+    const userMessage: Message = { role: 'user', content: input }
+    setMessages((prev) => [...prev, userMessage])
+    const messageToSend = input
+    setInput('')
+
+    await sendMessage(messageToSend, [...messages, userMessage])
+  }
+
+  const handleRegenerate = async () => {
+    if (messages.length < 2) return
+
+    // Remove last AI response
+    const newMessages = messages.slice(0, -1)
+    setMessages(newMessages)
+
+    // Get the last user message
+    const lastUserMessage = newMessages[newMessages.length - 1]
+    if (lastUserMessage && lastUserMessage.role === 'user') {
+      // Regenerate using messages before the last AI response
+      await sendMessage(lastUserMessage.content, newMessages.slice(0, -1))
     }
   }
 
@@ -300,17 +321,22 @@ export default function MainChatPage() {
                 {/* Example prompts */}
                 <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto">
                   {[
-                    'Customer refusing to pay final balance',
-                    'How to price a kitchen extension',
-                    'Client wants extras but no paperwork',
-                    'Job running over budget - what to do',
+                    { icon: '💷', text: 'Customer refusing to pay final balance' },
+                    { icon: '📄', text: 'How to price a kitchen extension' },
+                    { icon: '🔁', text: 'Client wants extras but no paperwork' },
+                    { icon: '🧱', text: 'Job running over budget - what to do' },
+                    { icon: '😤', text: 'Difficult customer changing their mind' },
+                    { icon: '⚠️', text: 'Customer threatening legal action' },
                   ].map((example, idx) => (
                     <button
                       key={idx}
-                      onClick={() => setInput(example)}
-                      className="px-4 py-3 bg-bg-secondary border border-border-subtle hover:border-accent-blue rounded-lg text-sm text-left transition-all hover:bg-bg-hover"
+                      onClick={() => setInput(example.text)}
+                      className="px-4 py-3 bg-bg-secondary border border-border-subtle hover:border-orange-500/50 rounded-xl text-sm text-left transition-all hover:bg-bg-hover group"
                     >
-                      "{example}"
+                      <div className="flex items-start gap-3">
+                        <span className="text-xl">{example.icon}</span>
+                        <span className="group-hover:text-white transition-colors">"{example.text}"</span>
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -320,26 +346,96 @@ export default function MainChatPage() {
             {messages.map((msg, idx) => (
               <div
                 key={idx}
-                className={`mb-6 ${
+                className={`group mb-8 ${
                   msg.role === 'user' ? 'flex justify-end' : ''
                 }`}
               >
                 {msg.role === 'assistant' && (
-                  <div className="flex gap-4 max-w-3xl">
+                  <div className="flex gap-4 w-full">
                     <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-sm font-bold">AI</span>
                     </div>
-                    <div className="flex-1 pt-1">
-                      <div className="whitespace-pre-wrap leading-relaxed text-text-primary">
-                        {msg.content}
+                    <div className="flex-1 min-w-0">
+                      <div className="prose prose-invert max-w-none">
+                        <div className="whitespace-pre-wrap leading-relaxed text-text-primary">
+                          {msg.content.split('\n').map((line, i) => {
+                            // Handle bullet points
+                            if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                              return (
+                                <div key={i} className="flex gap-2 mb-2">
+                                  <span className="text-orange-400 flex-shrink-0">•</span>
+                                  <span>{line.replace(/^[•\-]\s*/, '')}</span>
+                                </div>
+                              )
+                            }
+                            // Handle numbered lists
+                            if (/^\d+\./.test(line.trim())) {
+                              return (
+                                <div key={i} className="flex gap-2 mb-2">
+                                  <span className="text-orange-400 flex-shrink-0 font-semibold">
+                                    {line.match(/^\d+\./)?.[0]}
+                                  </span>
+                                  <span>{line.replace(/^\d+\.\s*/, '')}</span>
+                                </div>
+                              )
+                            }
+                            // Handle bold text **text**
+                            if (line.includes('**')) {
+                              const parts = line.split(/(\*\*.*?\*\*)/)
+                              return (
+                                <p key={i} className="mb-2">
+                                  {parts.map((part, j) => {
+                                    if (part.startsWith('**') && part.endsWith('**')) {
+                                      return (
+                                        <strong key={j} className="font-semibold text-white">
+                                          {part.slice(2, -2)}
+                                        </strong>
+                                      )
+                                    }
+                                    return part
+                                  })}
+                                </p>
+                              )
+                            }
+                            // Regular paragraph
+                            if (line.trim()) {
+                              return <p key={i} className="mb-2">{line}</p>
+                            }
+                            return <br key={i} />
+                          })}
+                        </div>
+                      </div>
+                      <div className="mt-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.content)
+                          }}
+                          className="p-1.5 hover:bg-bg-hover rounded-lg transition-colors"
+                          title="Copy"
+                        >
+                          <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                        {idx === messages.length - 1 && !isLoading && (
+                          <button
+                            onClick={handleRegenerate}
+                            className="p-1.5 hover:bg-bg-hover rounded-lg transition-colors"
+                            title="Regenerate response"
+                          >
+                            <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
                 )}
 
                 {msg.role === 'user' && (
-                  <div className="bg-bg-elevated border border-border-subtle rounded-2xl px-4 py-3 max-w-xl">
-                    <div className="whitespace-pre-wrap leading-relaxed">
+                  <div className="bg-bg-elevated rounded-2xl px-5 py-3 max-w-2xl">
+                    <div className="whitespace-pre-wrap leading-relaxed text-text-primary">
                       {msg.content}
                     </div>
                   </div>
