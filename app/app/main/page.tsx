@@ -26,6 +26,7 @@ export default function MainChatPage() {
   const [userName, setUserName] = useState('')
   const [userPlan, setUserPlan] = useState('')
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Set sidebar open on desktop by default
@@ -237,7 +238,20 @@ export default function MainChatPage() {
         } bg-[#202123] flex-shrink-0 transition-all duration-200 overflow-hidden flex flex-col fixed md:relative h-full z-50 md:z-auto`}
       >
         {/* Sidebar Header */}
-        <div className="p-2">
+        <div className="p-2 space-y-2">
+          {/* Close button - mobile only */}
+          <div className="flex justify-end md:hidden mb-2">
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 hover:bg-[#2A2B32] rounded-md text-white/70 hover:text-white transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* New Chat Button */}
           <button
             onClick={handleNewChat}
             className="w-full px-3 py-3 border border-white/20 hover:bg-[#2A2B32] rounded-lg text-white text-sm transition-colors flex items-center gap-3"
@@ -247,11 +261,29 @@ export default function MainChatPage() {
             </svg>
             <span>New chat</span>
           </button>
+
+          {/* Search Input */}
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search chats..."
+              className="w-full px-3 py-2.5 pl-9 bg-[#2A2B32] border border-white/10 rounded-lg text-white text-sm placeholder-white/40 focus:outline-none focus:border-white/20 transition-colors"
+            />
+            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
         </div>
 
         {/* Conversations List */}
         <div className="flex-1 overflow-y-auto px-2">
-          {conversations.map((conv) => (
+          {conversations
+            .filter((conv) =>
+              conv.name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+            .map((conv) => (
             <button
               key={conv.id}
               onClick={() => loadConversation(conv.id)}
