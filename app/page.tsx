@@ -28,16 +28,16 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 glass border-b border-border-subtle">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center max-w-7xl">
-          <div className="text-lg font-semibold tracking-tight">
+      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-black/50 border-b border-white/10">
+        <div className="container mx-auto px-6 lg:px-8 py-5 flex justify-between items-center max-w-7xl">
+          <div className="text-xl font-semibold tracking-tight">
             Builder GPT
           </div>
           <Link
             href="/login"
-            className="text-sm text-text-secondary hover:text-white transition-colors"
+            className="text-sm text-white/60 hover:text-white transition-colors duration-300"
           >
             Sign in
           </Link>
@@ -45,114 +45,96 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-accent-blue/10 via-transparent to-transparent opacity-50" />
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-blue/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-accent-purple/20 rounded-full blur-3xl" />
+      <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
+        {/* Premium gradient orbs */}
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-blue-500/30 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '6s' }} />
 
-        <div className="container mx-auto max-w-5xl relative z-10">
-          <div className="text-center space-y-8 fade-in">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-border-subtle text-sm">
-              <span className="w-2 h-2 bg-success-green rounded-full animate-pulse" />
-              <span className="text-text-secondary">AI-powered construction advisor</span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-6xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-              Sort job problems.
-              <br />
-              <span className="bg-gradient-to-r from-white via-white to-text-secondary bg-clip-text text-transparent">
-                Get clear answers.
+        <div className="container mx-auto max-w-6xl relative z-10 py-32">
+          <div className="text-center space-y-12">
+            {/* Headline with refined typography */}
+            <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-[0.95] mb-8">
+              <span className="block text-white/90">Clear advice.</span>
+              <span className="block bg-gradient-to-r from-white to-white/40 bg-clip-text text-transparent">
+                Real problems.
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-text-secondary max-w-3xl mx-auto leading-relaxed">
-              Builder GPT helps UK builders deal with payment issues, extras, difficult customers,
-              pricing pushback, and disputes.
-              <span className="text-white font-medium"> Plain guidance. No waffle.</span>
+            {/* Subtitle with better spacing */}
+            <p className="text-2xl md:text-3xl text-white/50 max-w-3xl mx-auto leading-relaxed font-light">
+              The AI advisor built specifically for UK builders and trades
             </p>
 
-            {/* CTA */}
-            <form onSubmit={handleGetStarted} className="max-w-md mx-auto">
-              <div className="flex gap-3">
+            {/* CTA with premium styling */}
+            <form onSubmit={handleGetStarted} className="max-w-xl mx-auto mt-12">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder="Enter your email"
                   required
-                  className="flex-1 px-5 py-4 bg-bg-elevated border border-border-default rounded-xl text-white placeholder-text-muted focus:outline-none focus:border-accent-blue focus:ring-2 focus:ring-accent-blue/20 transition-all"
+                  className="flex-1 px-6 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl text-white placeholder-white/30 focus:outline-none focus:border-white/30 focus:bg-white/10 transition-all duration-300 text-lg"
                 />
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-8 py-4 bg-accent-blue hover:bg-accent-blue-hover text-white font-medium rounded-xl transition-all hover:shadow-glow-blue disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-10 py-5 bg-white text-black font-semibold rounded-2xl transition-all duration-300 hover:bg-white/90 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-lg"
                 >
                   {isLoading ? 'Sending...' : 'Get started'}
                 </button>
               </div>
-              <p className="text-sm text-text-muted mt-3">Free 7-day trial. No card needed.</p>
+              <p className="text-sm text-white/40 mt-4">Start your free 7-day trial — no card required</p>
             </form>
 
-            {/* Trust indicators */}
-            <div className="flex items-center justify-center gap-8 text-sm text-text-muted pt-8">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>UK construction context</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Plain English</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-success-green" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Instant answers</span>
-              </div>
+            {/* Minimal trust indicators */}
+            <div className="flex items-center justify-center gap-12 text-sm text-white/40 pt-12">
+              <span>UK focused</span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>Plain English</span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>Instant answers</span>
             </div>
           </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/30 animate-bounce">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
         </div>
       </section>
 
       {/* Problem areas */}
-      <section className="py-20 px-6 relative">
+      <section className="py-32 px-6 relative bg-gradient-to-b from-black to-zinc-950">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Built for real builder problems
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+              Built for real problems
             </h2>
-            <p className="text-xl text-text-secondary">
-              Get guidance on the issues that actually cost you time and money
+            <p className="text-xl md:text-2xl text-white/40 font-light">
+              Get clear guidance when it matters most
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { title: 'Payment problems', desc: 'Late payments, non-payment, chase wording', icon: '💷' },
-              { title: 'Changes & extras', desc: 'Scope creep, pricing extras, keeping control', icon: '🔁' },
-              { title: 'Difficult customers', desc: 'Unreasonable demands, managing expectations', icon: '😤' },
-              { title: 'Jobs running over', desc: 'Delays, cost control, client communication', icon: '🧱' },
-              { title: 'Pricing pushback', desc: 'Defending quotes, handling objections', icon: '📄' },
-              { title: 'Dispute starting', desc: 'De-escalation, wording, next steps', icon: '⚠️' },
+              { title: 'Payment problems', desc: 'Late payments, chase wording, protecting your position' },
+              { title: 'Changes & extras', desc: 'Scope creep, pricing additional work, keeping control' },
+              { title: 'Difficult customers', desc: 'Managing unreasonable demands and expectations' },
+              { title: 'Jobs running over', desc: 'Delays, cost control, clear client communication' },
+              { title: 'Pricing pushback', desc: 'Defending quotes, handling objections confidently' },
+              { title: 'Disputes', desc: 'De-escalation tactics, professional wording, next steps' },
             ].map((item, i) => (
               <div
                 key={i}
-                className="group glass hover:bg-bg-elevated border border-border-subtle rounded-2xl p-6 hover-lift cursor-pointer fade-in"
-                style={{ animationDelay: `${i * 0.1}s` }}
+                className="group relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 hover:bg-white/10 hover:border-white/20 transition-all duration-500 cursor-pointer"
               >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-lg font-semibold mb-2 group-hover:text-accent-blue transition-colors">
+                <h3 className="text-2xl font-semibold mb-3 text-white/90 group-hover:text-white transition-colors duration-300">
                   {item.title}
                 </h3>
-                <p className="text-sm text-text-secondary leading-relaxed">
+                <p className="text-base text-white/40 leading-relaxed group-hover:text-white/60 transition-colors duration-300">
                   {item.desc}
                 </p>
               </div>
@@ -162,29 +144,31 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section className="py-20 px-6 bg-bg-secondary">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+      <section className="py-32 px-6 bg-black relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full blur-[150px]" />
+
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
               Simple. Fast. Clear.
             </h2>
-            <p className="text-xl text-text-secondary">
-              Three steps to getting actionable advice
+            <p className="text-xl md:text-2xl text-white/40 font-light">
+              Three steps to actionable advice
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid md:grid-cols-3 gap-16">
             {[
-              { step: '1', title: 'Pick your issue', desc: 'Click what you need help with' },
-              { step: '2', title: 'Describe the situation', desc: 'Simple questions, not forms' },
-              { step: '3', title: 'Get clear guidance', desc: "What's happening, the risk, what to do next" },
+              { step: '01', title: 'Pick your issue', desc: 'Select the problem you're facing' },
+              { step: '02', title: 'Describe it', desc: 'Chat naturally, no forms to fill' },
+              { step: '03', title: 'Get guidance', desc: 'Clear next steps, ready to use' },
             ].map((item, i) => (
-              <div key={i} className="text-center fade-in" style={{ animationDelay: `${i * 0.15}s` }}>
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center text-2xl font-bold shadow-glow-blue">
+              <div key={i} className="text-center group">
+                <div className="text-7xl font-bold mb-8 bg-gradient-to-br from-white/20 to-white/5 bg-clip-text text-transparent group-hover:from-white/40 group-hover:to-white/10 transition-all duration-500">
                   {item.step}
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-text-secondary leading-relaxed">{item.desc}</p>
+                <h3 className="text-2xl font-semibold mb-4 text-white/90">{item.title}</h3>
+                <p className="text-lg text-white/40 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -192,138 +176,138 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-24 px-6">
+      <section id="pricing" className="py-32 px-6 bg-gradient-to-b from-zinc-950 to-black">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
               Simple pricing
             </h2>
-            <p className="text-xl text-text-secondary">
-              All plans include 7-day free trial. No credit card required.
+            <p className="text-xl md:text-2xl text-white/40 font-light">
+              Start with a 7-day free trial — no card required
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Solo Builder */}
-            <div className="glass border border-border-subtle rounded-3xl p-8 hover-lift">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Solo Builder</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-bold">£29</span>
-                  <span className="text-text-secondary">/month</span>
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 hover:bg-white/[0.07] hover:border-white/20 transition-all duration-500">
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold mb-6 text-white/90">Solo Builder</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl font-bold tracking-tight">£29</span>
+                  <span className="text-xl text-white/40">/month</span>
                 </div>
               </div>
 
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <ul className="space-y-4 mb-10">
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-text-secondary">Unlimited chat</span>
+                  <span>Unlimited chat</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-text-secondary">All issue categories</span>
+                  <span>All issue categories</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-text-muted mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/30">
+                  <svg className="w-6 h-6 text-white/20 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <span className="text-text-muted">No conversation history</span>
+                  <span>No conversation history</span>
                 </li>
               </ul>
 
               <Link
                 href="/signup?plan=solo"
-                className="block w-full text-center px-6 py-3 bg-bg-elevated border border-border-default hover:border-accent-blue rounded-xl transition-all hover-lift"
+                className="block w-full text-center px-6 py-4 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-2xl transition-all duration-300 text-white/90 font-medium"
               >
                 Start free trial
               </Link>
             </div>
 
             {/* Small Firm - Featured */}
-            <div className="relative glass border-2 border-accent-blue rounded-3xl p-8 hover-lift shadow-glow-blue">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full text-sm font-medium">
-                Popular
+            <div className="relative bg-white/10 backdrop-blur-xl border-2 border-white/30 rounded-3xl p-10 hover:border-white/40 transition-all duration-500 shadow-2xl shadow-white/10">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-white text-black rounded-full text-sm font-semibold">
+                Most popular
               </div>
 
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Small Firm</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-bold">£79</span>
-                  <span className="text-text-secondary">/month</span>
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold mb-6 text-white">Small Firm</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl font-bold tracking-tight">£79</span>
+                  <span className="text-xl text-white/40">/month</span>
                 </div>
               </div>
 
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <ul className="space-y-4 mb-10">
+                <li className="flex items-start gap-3 text-white/90">
+                  <svg className="w-6 h-6 text-white mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Everything in Solo</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/90">
+                  <svg className="w-6 h-6 text-white mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Job context (name, type, value)</span>
+                  <span>Job context tracking</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/90">
+                  <svg className="w-6 h-6 text-white mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Conversation history</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/90">
+                  <svg className="w-6 h-6 text-white mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Light memory across chats</span>
+                  <span>Context memory</span>
                 </li>
               </ul>
 
               <Link
                 href="/signup?plan=small_firm"
-                className="block w-full text-center px-6 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white rounded-xl transition-all hover-lift"
+                className="block w-full text-center px-6 py-4 bg-white text-black hover:bg-white/90 rounded-2xl transition-all duration-300 font-semibold hover:scale-[1.02]"
               >
                 Start free trial
               </Link>
             </div>
 
             {/* Pro */}
-            <div className="glass border border-border-subtle rounded-3xl p-8 hover-lift">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-2">Pro</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-bold">£149</span>
-                  <span className="text-text-secondary">/month</span>
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 hover:bg-white/[0.07] hover:border-white/20 transition-all duration-500">
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold mb-6 text-white/90">Pro</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-6xl font-bold tracking-tight">£149</span>
+                  <span className="text-xl text-white/40">/month</span>
                 </div>
               </div>
 
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <ul className="space-y-4 mb-10">
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Everything in Small Firm</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span>Multiple users per account</span>
+                  <span>Multi-user accounts</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Shared conversations</span>
                 </li>
-                <li className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-success-green mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <li className="flex items-start gap-3 text-white/60">
+                  <svg className="w-6 h-6 text-white/40 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                   <span>Dispute wording packs</span>
                 </li>
@@ -331,7 +315,7 @@ export default function LandingPage() {
 
               <Link
                 href="/signup?plan=pro"
-                className="block w-full text-center px-6 py-3 bg-bg-elevated border border-border-default hover:border-accent-blue rounded-xl transition-all hover-lift"
+                className="block w-full text-center px-6 py-4 bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-2xl transition-all duration-300 text-white/90 font-medium"
               >
                 Start free trial
               </Link>
@@ -341,9 +325,9 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border-subtle py-12 px-6">
+      <footer className="border-t border-white/10 py-16 px-6 bg-black">
         <div className="container mx-auto max-w-7xl text-center">
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-white/30">
             &copy; 2025 Builder GPT. Built for UK builders and trades.
           </p>
         </div>
