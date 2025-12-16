@@ -24,6 +24,8 @@ export default function MainChatPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [userName, setUserName] = useState('')
+  const [userPlan, setUserPlan] = useState('')
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -42,6 +44,7 @@ export default function MainChatPage() {
         if (res.ok) {
           const data = await res.json()
           setUserName(data.user?.name || data.user?.email?.split('@')[0] || 'User')
+          setUserPlan(data.user?.plan || 'SOLO')
         }
       } catch (error) {
         console.error('Failed to fetch user:', error)
@@ -133,6 +136,19 @@ export default function MainChatPage() {
     loadConversations()
   }, [])
 
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (showUserMenu && !target.closest('.user-menu-container')) {
+        setShowUserMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showUserMenu])
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -143,6 +159,19 @@ export default function MainChatPage() {
   const handleLogout = async () => {
     document.cookie = 'auth-token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
     router.push('/')
+  }
+
+  const getPlanDisplayName = (plan: string) => {
+    const names: Record<string, string> = {
+      SOLO: 'Solo',
+      SMALL_FIRM: 'Small Firm',
+      PRO: 'Pro',
+    }
+    return names[plan] || plan
+  }
+
+  const handleUpgrade = () => {
+    router.push('/pricing')
   }
 
   return (
@@ -189,24 +218,52 @@ export default function MainChatPage() {
         </div>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-border-subtle">
-          <div className="flex items-center justify-between">
+        <div className="p-4 border-t border-border-subtle relative user-menu-container">
+          <button
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            className="w-full flex items-center justify-between hover:bg-bg-hover rounded-lg px-2 py-2 transition-colors"
+          >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                 {userName.charAt(0).toUpperCase()}
               </div>
-              <span className="text-sm font-medium">{userName}</span>
+              <div className="text-left">
+                <div className="text-sm font-medium">{userName}</div>
+                <div className="text-xs text-text-muted">{getPlanDisplayName(userPlan)} Plan</div>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-text-muted hover:text-text-primary transition-colors"
-              title="Logout"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
-          </div>
+            <svg className={`w-4 h-4 text-text-muted transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+
+          {/* Dropdown Menu */}
+          {showUserMenu && (
+            <div className="absolute bottom-full left-4 right-4 mb-2 bg-bg-elevated border border-border-subtle rounded-lg shadow-lg overflow-hidden">
+              <button
+                onClick={handleUpgrade}
+                className="w-full px-4 py-3 text-left hover:bg-bg-hover transition-colors flex items-center gap-3"
+              >
+                <svg className="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                <div>
+                  <div className="text-sm font-medium">Upgrade plan</div>
+                  <div className="text-xs text-text-muted">Get more features</div>
+                </div>
+              </button>
+              <div className="border-t border-border-subtle"></div>
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-3 text-left hover:bg-bg-hover transition-colors flex items-center gap-3"
+              >
+                <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="text-sm font-medium">Log out</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
