@@ -996,7 +996,7 @@ export default function MainChatPage() {
         </div>
 
         {/* Input - Fixed at bottom on mobile */}
-        <div className="border-t border-white/[0.08] bg-black/80 backdrop-blur-xl flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="bg-black flex-shrink-0 sticky bottom-0 z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 pt-4 pb-4 md:pb-5">
             <div className="relative bg-white/[0.05] rounded-2xl border border-white/[0.1] shadow-2xl shadow-black/20 backdrop-blur-sm">
               <textarea
