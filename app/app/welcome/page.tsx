@@ -9,7 +9,7 @@ const FEATURES = [
   { emoji: '😤', text: 'Difficult customers & disputes' },
   { emoji: '🧱', text: 'Job overruns & delays' },
   { emoji: '📄', text: 'Pricing & quotes' },
-  { emoji: '⚠️', text: 'Legal advice & protection' },
+  { emoji: '⚠️', text: 'On-site problems - we always find a solution' },
 ]
 
 export default function WelcomePage() {
@@ -58,8 +58,11 @@ export default function WelcomePage() {
           <h1 className="text-5xl md:text-6xl font-bold mb-4">
             Hello {userName}! 👋
           </h1>
-          <p className="text-2xl text-text-secondary">
+          <p className="text-2xl text-text-secondary mb-2">
             Welcome to Builder GPT
+          </p>
+          <p className="text-lg text-text-muted">
+            When things go wrong on site, we always find a solution
           </p>
         </div>
 
