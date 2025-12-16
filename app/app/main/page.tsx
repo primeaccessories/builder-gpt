@@ -167,9 +167,14 @@ export default function MainChatPage() {
         setExpandedProjects(newExpanded)
         setNewProjectName('')
         setShowNewProjectModal(false)
+      } else {
+        const error = await res.json()
+        console.error('Failed to create project:', error)
+        alert(`Failed to create project: ${error.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Failed to create project:', error)
+      alert('Failed to create project. Please try again.')
     }
   }
 
