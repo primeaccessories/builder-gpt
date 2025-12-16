@@ -46,7 +46,11 @@ body.chat-page {
   height: 100% !important;
   height: -webkit-fill-available !important;
   overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
   -webkit-overflow-scrolling: touch !important;
+  /* Prevent pull-to-refresh */
+  touch-action: pan-y pan-x !important;
+  -webkit-touch-callout: none !important;
 }
 
 @supports (height: 100dvh) {

@@ -64,10 +64,31 @@ export default function MainChatPage() {
     window.addEventListener('resize', setVH)
     window.addEventListener('orientationchange', setVH)
 
+    // Prevent pull-to-refresh on mobile
+    let lastTouchY = 0
+    const preventPullToRefresh = (e: TouchEvent) => {
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop
+      const touch = e.touches[0]
+
+      if (scrollY === 0 && touch.clientY > lastTouchY) {
+        // Pulling down at the top of the page
+        e.preventDefault()
+      }
+
+      lastTouchY = touch.clientY
+    }
+
+    document.addEventListener('touchstart', (e) => {
+      lastTouchY = e.touches[0].clientY
+    }, { passive: false })
+
+    document.addEventListener('touchmove', preventPullToRefresh, { passive: false })
+
     return () => {
       document.body.classList.remove('chat-page')
       window.removeEventListener('resize', setVH)
       window.removeEventListener('orientationchange', setVH)
+      document.removeEventListener('touchmove', preventPullToRefresh)
     }
   }, [])
 
@@ -429,7 +450,9 @@ export default function MainChatPage() {
     <div className="fixed inset-0 bg-[#343541] flex overflow-hidden" style={{
       height: 'calc(var(--vh, 1vh) * 100)',
       width: '100vw',
-      minHeight: '-webkit-fill-available'
+      minHeight: '-webkit-fill-available',
+      overscrollBehavior: 'none',
+      WebkitOverflowScrolling: 'touch'
     }}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
@@ -702,7 +725,9 @@ export default function MainChatPage() {
         <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'contain',
-          scrollbarWidth: 'thin'
+          overscrollBehaviorY: 'contain',
+          scrollbarWidth: 'thin',
+          touchAction: 'pan-y'
         }}>
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
