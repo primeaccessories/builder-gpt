@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
 interface Message {
@@ -8,7 +8,9 @@ interface Message {
   content: string
 }
 
-export default function ChatPage() {
+export const dynamic = 'force-dynamic'
+
+function ChatContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const issue = searchParams.get('issue') || 'other'
@@ -258,5 +260,13 @@ export default function ChatPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-bg-primary flex items-center justify-center">Loading...</div>}>
+      <ChatContent />
+    </Suspense>
   )
 }
