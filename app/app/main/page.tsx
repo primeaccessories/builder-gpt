@@ -146,22 +146,31 @@ export default function MainChatPage() {
     setMessages([])
   }
 
-  const handleCreateProject = () => {
+  const handleCreateProject = async () => {
     if (!newProjectName.trim()) return
 
-    const newProject: Project = {
-      id: `project-${Date.now()}`,
-      name: newProjectName.trim(),
-      createdAt: new Date().toISOString(),
-    }
+    try {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newProjectName.trim() }),
+      })
 
-    setProjects([newProject, ...projects])
-    setCurrentProjectId(newProject.id)
-    const newExpanded = new Set(expandedProjects)
-    newExpanded.add(newProject.id)
-    setExpandedProjects(newExpanded)
-    setNewProjectName('')
-    setShowNewProjectModal(false)
+      if (res.ok) {
+        const data = await res.json()
+        const newProject = data.project
+
+        setProjects([newProject, ...projects])
+        setCurrentProjectId(newProject.id)
+        const newExpanded = new Set(expandedProjects)
+        newExpanded.add(newProject.id)
+        setExpandedProjects(newExpanded)
+        setNewProjectName('')
+        setShowNewProjectModal(false)
+      }
+    } catch (error) {
+      console.error('Failed to create project:', error)
+    }
   }
 
   const toggleProject = (projectId: string) => {
@@ -285,6 +294,7 @@ export default function MainChatPage() {
           message: messageText,
           conversationHistory: previousMessages,
           conversationId: currentConversationId,
+          projectId: currentProjectId, // Include project ID for new conversations
         }),
       })
 
@@ -381,7 +391,20 @@ export default function MainChatPage() {
 
   useEffect(() => {
     loadConversations()
+    loadProjects()
   }, [])
+
+  const loadProjects = async () => {
+    try {
+      const res = await fetch('/api/projects')
+      if (res.ok) {
+        const data = await res.json()
+        setProjects(data.projects || [])
+      }
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    }
+  }
 
   // Close menus when clicking outside
   useEffect(() => {

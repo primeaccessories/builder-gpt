@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       jobContext,
       conversationHistory = [],
       conversationId,
+      projectId,
     } = body
 
     // Tier enforcement: Job context only for SMALL_FIRM and PRO
@@ -118,6 +119,7 @@ export async function POST(request: NextRequest) {
           data: {
             userId: user.id,
             issueType: issueType.toUpperCase(),
+            projectId: projectId || null, // Assign to project if provided
           },
         })
         savedConversationId = conversation.id
