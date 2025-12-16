@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 const ISSUES = [
@@ -49,6 +50,14 @@ const ISSUES = [
 
 export default function IssueSelectorPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    // Check if user has seen welcome screen
+    const welcomeSeen = localStorage.getItem('builder-gpt-welcome-seen')
+    if (!welcomeSeen) {
+      router.push('/app/welcome')
+    }
+  }, [router])
 
   const handleIssueClick = (issueId: string) => {
     router.push(`/app/chat?issue=${issueId}`)
