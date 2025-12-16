@@ -52,6 +52,14 @@ export default function MainChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Lock page scrolling on chat page only
+  useEffect(() => {
+    document.body.classList.add('chat-page')
+    return () => {
+      document.body.classList.remove('chat-page')
+    }
+  }, [])
+
   // Set sidebar open on desktop by default
   useEffect(() => {
     const handleResize = () => {
