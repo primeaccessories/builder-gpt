@@ -167,6 +167,15 @@ export default function MainChatPage() {
         setExpandedProjects(newExpanded)
         setNewProjectName('')
         setShowNewProjectModal(false)
+
+        // Automatically start a new chat in this project (like ChatGPT)
+        setCurrentConversationId(null)
+        setMessages([])
+
+        // Close sidebar on mobile so user can start chatting
+        if (window.innerWidth < 768) {
+          setSidebarOpen(false)
+        }
       } else {
         const error = await res.json()
         console.error('Failed to create project:', error)
