@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({
       success: true,
-      user: { id: user.id, email: user.email, plan: user.plan }
+      user: { id: user.id, email: user.email, plan: user.plan },
+      needsSubscription: user.subscriptionStatus !== 'active' && user.subscriptionStatus !== 'trialing'
     })
 
     // Set auth cookie

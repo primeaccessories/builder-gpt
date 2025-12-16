@@ -23,13 +23,31 @@ export default function LoginPage() {
     const data = await res.json()
 
     if (res.ok) {
-      // Redirect to app
-      window.location.href = '/app'
+      // Check if user needs subscription
+      if (data.needsSubscription) {
+        // Redirect to Stripe checkout with Small Firm plan (recommended)
+        const checkoutRes = await fetch('/api/stripe/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan: 'small_firm', email }),
+        })
+
+        const checkoutData = await checkoutRes.json()
+
+        if (checkoutRes.ok && checkoutData.url) {
+          window.location.href = checkoutData.url
+        } else {
+          setError('Failed to start checkout. Please try again.')
+          setIsLoading(false)
+        }
+      } else {
+        // User has active subscription, go to app
+        window.location.href = '/app'
+      }
     } else {
       setError(data.error || 'Invalid email or password')
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
   return (
