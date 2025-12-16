@@ -13,12 +13,22 @@ interface Conversation {
   name: string
   issueType: string
   createdAt: string
+  projectId?: string
+}
+
+interface Project {
+  id: string
+  name: string
+  createdAt: string
 }
 
 export default function MainChatPage() {
   const router = useRouter()
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null)
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set())
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -27,6 +37,8 @@ export default function MainChatPage() {
   const [userPlan, setUserPlan] = useState('')
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false)
+  const [newProjectName, setNewProjectName] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Set sidebar open on desktop by default
@@ -76,6 +88,37 @@ export default function MainChatPage() {
   const handleNewChat = () => {
     setCurrentConversationId(null)
     setMessages([])
+  }
+
+  const handleCreateProject = () => {
+    if (!newProjectName.trim()) return
+
+    const newProject: Project = {
+      id: `project-${Date.now()}`,
+      name: newProjectName.trim(),
+      createdAt: new Date().toISOString(),
+    }
+
+    setProjects([newProject, ...projects])
+    setCurrentProjectId(newProject.id)
+    setExpandedProjects(new Set([...expandedProjects, newProject.id]))
+    setNewProjectName('')
+    setShowNewProjectModal(false)
+  }
+
+  const toggleProject = (projectId: string) => {
+    const newExpanded = new Set(expandedProjects)
+    if (newExpanded.has(projectId)) {
+      newExpanded.delete(projectId)
+    } else {
+      newExpanded.add(projectId)
+    }
+    setExpandedProjects(newExpanded)
+  }
+
+  const selectProject = (projectId: string) => {
+    setCurrentProjectId(projectId)
+    setSearchQuery('') // Clear search when selecting project
   }
 
   const sendMessage = async (messageText: string, previousMessages: Message[] = messages) => {
@@ -251,16 +294,27 @@ export default function MainChatPage() {
             </button>
           </div>
 
-          {/* New Chat Button */}
-          <button
-            onClick={handleNewChat}
-            className="w-full px-3 py-2.5 border border-white/[0.12] hover:bg-white/[0.08] rounded-lg text-white/90 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>New chat</span>
-          </button>
+          {/* New Chat and New Project Buttons */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={handleNewChat}
+              className="px-3 py-2.5 border border-white/[0.12] hover:bg-white/[0.08] rounded-lg text-white/90 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Chat</span>
+            </button>
+            <button
+              onClick={() => setShowNewProjectModal(true)}
+              className="px-3 py-2.5 border border-white/[0.12] hover:bg-white/[0.08] rounded-lg text-white/90 text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+              <span>Project</span>
+            </button>
+          </div>
 
           {/* Search Input */}
           <div className="relative">
@@ -277,12 +331,72 @@ export default function MainChatPage() {
           </div>
         </div>
 
-        {/* Conversations List */}
+        {/* Projects and Conversations List */}
         <div className="flex-1 overflow-y-auto px-2 py-2">
-          {conversations
-            .filter((conv) =>
-              conv.name.toLowerCase().includes(searchQuery.toLowerCase())
+          {/* Projects */}
+          {projects
+            .filter((project) =>
+              searchQuery ? project.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
             )
+            .map((project) => {
+              const projectChats = conversations.filter(c => c.projectId === project.id)
+              const isExpanded = expandedProjects.has(project.id)
+
+              return (
+                <div key={project.id} className="mb-2">
+                  {/* Project Folder */}
+                  <button
+                    onClick={() => toggleProject(project.id)}
+                    className={`w-full px-3 py-2.5 rounded-lg text-left text-sm font-medium transition-all duration-200 flex items-center gap-2.5 ${
+                      currentProjectId === project.id
+                        ? 'bg-white/[0.12] text-white'
+                        : 'text-white/60 hover:bg-white/[0.06] hover:text-white/90'
+                    }`}
+                  >
+                    <svg className={`w-4 h-4 flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                    <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                    </svg>
+                    <span className="truncate flex-1">{project.name}</span>
+                    <span className="text-xs text-white/40">{projectChats.length}</span>
+                  </button>
+
+                  {/* Project Chats */}
+                  {isExpanded && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {projectChats
+                        .filter((conv) =>
+                          searchQuery ? conv.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
+                        )
+                        .map((conv) => (
+                        <button
+                          key={conv.id}
+                          onClick={() => loadConversation(conv.id)}
+                          className={`w-full px-3 py-2 rounded-lg text-left text-sm transition-all duration-200 active:scale-[0.98] ${
+                            currentConversationId === conv.id
+                              ? 'bg-white/[0.12] text-white shadow-sm'
+                              : 'text-white/50 hover:bg-white/[0.06] hover:text-white/80'
+                          }`}
+                        >
+                          <div className="truncate flex items-center gap-2">
+                            <svg className="w-3.5 h-3.5 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            <span className="truncate text-xs">{conv.name || 'New chat'}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+
+          {/* Uncategorized Chats */}
+          {conversations
+            .filter((conv) => !conv.projectId && (searchQuery ? conv.name.toLowerCase().includes(searchQuery.toLowerCase()) : true))
             .map((conv) => (
             <button
               key={conv.id}
@@ -554,6 +668,42 @@ export default function MainChatPage() {
           </div>
         </div>
       </div>
+
+      {/* New Project Modal */}
+      {showNewProjectModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={() => setShowNewProjectModal(false)}>
+          <div className="bg-[#1a1a1a] rounded-2xl border border-white/[0.1] p-6 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-semibold text-white mb-4">New Project</h3>
+            <input
+              type="text"
+              value={newProjectName}
+              onChange={(e) => setNewProjectName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateProject()}
+              placeholder="Project name..."
+              autoFocus
+              className="w-full px-4 py-3 bg-white/[0.05] border border-white/[0.1] rounded-xl text-white placeholder-white/40 focus:outline-none focus:bg-white/[0.08] focus:border-white/[0.2] transition-all duration-200 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowNewProjectModal(false)
+                  setNewProjectName('')
+                }}
+                className="px-4 py-2.5 text-white/70 hover:text-white hover:bg-white/[0.05] rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateProject}
+                disabled={!newProjectName.trim()}
+                className="px-4 py-2.5 bg-white text-black hover:bg-white/90 rounded-lg transition-all duration-200 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+              >
+                Create Project
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
