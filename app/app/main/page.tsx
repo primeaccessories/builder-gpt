@@ -360,15 +360,22 @@ export default function MainChatPage() {
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 hover:bg-white/[0.08] rounded-full transition-all duration-200 text-white/70 hover:text-white active:scale-95"
+              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              {sidebarOpen ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
             <div className="flex-1 text-center">
               <div className="text-sm font-semibold text-white/90">Builder GPT</div>
             </div>
-            <div className="w-9"></div> {/* Balance the hamburger button */}
+            <div className="w-9"></div> {/* Balance the button */}
           </div>
         </header>
 
