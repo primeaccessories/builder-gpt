@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  plan          Plan           @default(SOLO)
+  stripeCustomerId String?     @unique
+  stripeSubscriptionId String? @unique
+  subscriptionStatus String?   // active, canceled, past_due, trialing
+  trialEndsAt   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  conversations Conversation[]
+  messages      Message[]
+  jobContexts   JobContext[]
+}
+
+model Conversation {
+  id            String    @id @default(cuid())
+  userId        String
+  issueType     IssueType
+  jobContextId  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobContext    JobContext? @relation(fields: [jobContextId], references: [id])
+  messages      Message[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Message {
+  id              String       @id @default(cuid())
+  conversationId  String
+  userId          String
+  role            Role
+  content         String
+  createdAt       DateTime     @default(now())
+
+  conversation    Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([createdAt])
+}
+
+model JobContext {
+  id            String         @id @default(cuid())
+  userId        String
+  name          String
+  type          String
+  value         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+
+  @@index([userId])
+}
+
+enum Plan {
+  SOLO
+  SMALL_FIRM
+  PRO
+}
+
+enum IssueType {
+  PAYMENT
+  EXTRAS
+  CUSTOMER
+  OVERRUN
+  PRICING
+  DISPUTE
+  OTHER
+}
+
+enum Role {
+  USER
+  ASSISTANT
+}
