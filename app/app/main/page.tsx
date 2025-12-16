@@ -502,7 +502,7 @@ export default function MainChatPage() {
               {/* 3-dot menu */}
               <div
                 className={`absolute right-2 top-1/2 -translate-y-1/2 transition-opacity ${
-                  activeChatMenu === conv.id ? 'opacity-100' : 'opacity-0 group-hover/chat:opacity-100'
+                  activeChatMenu === conv.id ? 'opacity-100 pointer-events-auto' : 'opacity-0 group-hover/chat:opacity-100 pointer-events-none group-hover/chat:pointer-events-auto'
                 }`}
                 onMouseLeave={() => {
                   if (activeChatMenu === conv.id) {
