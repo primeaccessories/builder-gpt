@@ -24,6 +24,10 @@ model User {
   messages      Message[]
   jobContexts   JobContext[]
   projects      Project[]
+  jobs          Job[]
+  payments      Payment[]
+  templates     Template[]
+  riskFlags     RiskFlag[]
 }
 
 model Conversation {
@@ -32,17 +36,20 @@ model Conversation {
   issueType     IssueType
   jobContextId  String?
   projectId     String?
+  jobId         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobContext    JobContext? @relation(fields: [jobContextId], references: [id])
   project       Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  job           Job?      @relation(fields: [jobId], references: [id], onDelete: SetNull)
   messages      Message[]
 
   @@index([userId])
   @@index([createdAt])
   @@index([projectId])
+  @@index([jobId])
 }
 
 model Message {
@@ -108,4 +115,154 @@ model Project {
 
   @@index([userId])
   @@index([createdAt])
+}
+
+model Job {
+  id                  String      @id @default(cuid())
+  userId              String
+  name                String
+  customerName        String?
+  stage               JobStage    @default(QUOTE)
+  value               Float       @default(0)
+  invoicedAmount      Float       @default(0)
+  paidAmount          Float       @default(0)
+  outstandingAmount   Float       @default(0)
+  overdueAmount       Float       @default(0)
+  lastPaymentDate     DateTime?
+  nextPaymentDue      DateTime?
+  notes               String?
+  riskLevel           RiskLevel   @default(LOW)
+  needsAttentionToday Boolean     @default(false)
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments            Payment[]
+  riskFlags           RiskFlag[]
+  templates           Template[]
+  conversations       Conversation[]
+
+  @@index([userId])
+  @@index([stage])
+  @@index([needsAttentionToday])
+  @@index([createdAt])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  jobId          String
+  userId         String
+  amount         Float
+  type           PaymentType   @default(STAGE_PAYMENT)
+  status         PaymentStatus @default(PENDING)
+  dueDate        DateTime?
+  paidDate       DateTime?
+  invoiceNumber  String?
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  job            Job           @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([userId])
+  @@index([status])
+  @@index([dueDate])
+}
+
+model Template {
+  id          String       @id @default(cuid())
+  userId      String
+  jobId       String?
+  title       String
+  content     String
+  category    TemplateCategory
+  issueType   IssueType?
+  lastUsed    DateTime?
+  timesUsed   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job         Job?         @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([jobId])
+  @@index([category])
+  @@index([lastUsed])
+}
+
+model RiskFlag {
+  id          String       @id @default(cuid())
+  jobId       String
+  userId      String
+  type        RiskFlagType
+  severity    RiskLevel
+  message     String
+  dismissed   Boolean      @default(false)
+  dismissedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  job         Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([userId])
+  @@index([dismissed])
+  @@index([severity])
+}
+
+enum JobStage {
+  QUOTE
+  ACCEPTED
+  STARTED
+  IN_PROGRESS
+  WAITING_PAYMENT
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentType {
+  DEPOSIT
+  STAGE_PAYMENT
+  FINAL
+  VARIATION
+  MATERIALS
+}
+
+enum PaymentStatus {
+  PENDING
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TemplateCategory {
+  PAYMENT_CHASE
+  VARIATION_APPROVAL
+  CUSTOMER_UPDATE
+  QUOTE_FOLLOWUP
+  COMPLETION_NOTICE
+  DISPUTE_RESOLUTION
+  OTHER
+}
+
+enum RiskFlagType {
+  VARIATION_UNSIGNED
+  PAYMENT_OVERDUE
+  DECISION_DELAY
+  WORK_WITHOUT_APPROVAL
+  CUSTOMER_BEHAVIOR_PATTERN
+  INVOICE_UNPAID
+  MATERIALS_PAID_NO_PAYMENT
+  OTHER
 }

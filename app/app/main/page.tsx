@@ -498,6 +498,17 @@ export default function MainChatPage() {
             </button>
           </div>
 
+          {/* Dashboard Button */}
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="w-full px-3 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-lg text-white text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-blue-900/20"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            <span>Dashboard</span>
+          </button>
+
           {/* New Chat Button */}
           <button
             onClick={handleNewChat}
