@@ -876,14 +876,10 @@ export default function MainChatPage() {
                 </div>
 
                 {/* Example prompts */}
-                <div className="grid md:grid-cols-2 gap-2.5 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 gap-2.5 max-w-2xl mx-auto">
                   {[
                     { text: 'Customer won\'t pay the final balance. Keeps saying they\'re "not happy" but won\'t list issues.' },
                     { text: 'Customer keeps adding extras. I\'m halfway through and they assume it\'s included.' },
-                    { text: 'How do I price plastering a staircase and landing?' },
-                    { text: 'Customer says if I don\'t knock £300 off they\'ll ruin me on Facebook.' },
-                    { text: 'My subbie has gone quiet and I\'m meant to finish Friday.' },
-                    { text: 'How do I ask for a deposit without sounding dodgy?' },
                   ].map((example, idx) => (
                     <button
                       key={idx}
