@@ -43,7 +43,10 @@ export default function MainChatPage() {
         const res = await fetch('/api/user/me')
         if (res.ok) {
           const data = await res.json()
-          setUserName(data.user?.name || data.user?.email?.split('@')[0] || 'User')
+          // Use first name from full name, or email as fallback
+          const fullName = data.user?.name || ''
+          const firstName = fullName.split(' ')[0] || data.user?.email?.split('@')[0] || 'User'
+          setUserName(firstName)
           setUserPlan(data.user?.plan || 'SOLO')
         }
       } catch (error) {

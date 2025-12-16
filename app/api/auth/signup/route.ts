@@ -8,11 +8,18 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, plan } = await request.json()
+    const { firstName, lastName, email, password, plan } = await request.json()
 
     if (!email || !password) {
       return NextResponse.json(
         { error: 'Email and password required' },
+        { status: 400 }
+      )
+    }
+
+    if (!firstName || !lastName) {
+      return NextResponse.json(
+        { error: 'First name and last name required' },
         { status: 400 }
       )
     }
@@ -32,11 +39,13 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Create user with full name
+    const fullName = `${firstName} ${lastName}`
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
+        name: fullName,
         plan: plan?.toUpperCase() || 'SMALL_FIRM',
         subscriptionStatus: 'incomplete', // Will be updated after Stripe checkout
       },
