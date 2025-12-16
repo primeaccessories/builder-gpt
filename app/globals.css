@@ -62,6 +62,17 @@ body.chat-page {
 html:has(body.chat-page) {
   overflow: hidden !important;
   width: 100% !important;
+  position: fixed !important;
+  overscroll-behavior: none !important;
+}
+
+/* Safari-specific overscroll prevention */
+@supports (-webkit-touch-callout: none) {
+  html:has(body.chat-page),
+  body.chat-page {
+    overscroll-behavior-y: none !important;
+    -webkit-overflow-scrolling: auto !important;
+  }
 }
 
 /* Custom scrollbar */

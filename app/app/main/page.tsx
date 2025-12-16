@@ -64,31 +64,38 @@ export default function MainChatPage() {
     window.addEventListener('resize', setVH)
     window.addEventListener('orientationchange', setVH)
 
-    // Prevent pull-to-refresh on mobile
-    let lastTouchY = 0
-    const preventPullToRefresh = (e: TouchEvent) => {
-      const scrollY = window.pageYOffset || document.documentElement.scrollTop
-      const touch = e.touches[0]
+    // Prevent pull-to-refresh on mobile (especially Safari)
+    let touchStartY = 0
 
-      if (scrollY === 0 && touch.clientY > lastTouchY) {
-        // Pulling down at the top of the page
-        e.preventDefault()
-      }
-
-      lastTouchY = touch.clientY
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY
     }
 
-    document.addEventListener('touchstart', (e) => {
-      lastTouchY = e.touches[0].clientY
-    }, { passive: false })
+    const handleTouchMove = (e: TouchEvent) => {
+      const currentY = e.touches[0].clientY
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop
 
-    document.addEventListener('touchmove', preventPullToRefresh, { passive: false })
+      // If we're at the top and trying to pull down, prevent it
+      if (scrollY <= 0 && currentY > touchStartY) {
+        e.preventDefault()
+        return false
+      }
+    }
+
+    // Add to body and document for Safari
+    document.body.addEventListener('touchstart', handleTouchStart, { passive: false })
+    document.body.addEventListener('touchmove', handleTouchMove, { passive: false })
+    document.addEventListener('touchstart', handleTouchStart, { passive: false })
+    document.addEventListener('touchmove', handleTouchMove, { passive: false })
 
     return () => {
       document.body.classList.remove('chat-page')
       window.removeEventListener('resize', setVH)
       window.removeEventListener('orientationchange', setVH)
-      document.removeEventListener('touchmove', preventPullToRefresh)
+      document.body.removeEventListener('touchstart', handleTouchStart)
+      document.body.removeEventListener('touchmove', handleTouchMove)
+      document.removeEventListener('touchstart', handleTouchStart)
+      document.removeEventListener('touchmove', handleTouchMove)
     }
   }, [])
 
@@ -447,13 +454,17 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#343541] flex overflow-hidden" style={{
-      height: 'calc(var(--vh, 1vh) * 100)',
-      width: '100vw',
-      minHeight: '-webkit-fill-available',
-      overscrollBehavior: 'none',
-      WebkitOverflowScrolling: 'touch'
-    }}>
+    <div
+      className="fixed inset-0 bg-[#343541] flex overflow-hidden"
+      style={{
+        height: 'calc(var(--vh, 1vh) * 100)',
+        width: '100vw',
+        minHeight: '-webkit-fill-available',
+        overscrollBehavior: 'none',
+        overscrollBehaviorY: 'none',
+        WebkitOverflowScrolling: 'auto'
+      }}
+    >
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
@@ -514,11 +525,18 @@ export default function MainChatPage() {
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto px-2 py-2" style={{
-          WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'contain',
-          scrollbarWidth: 'thin'
-        }}>
+        <div
+          className="flex-1 overflow-y-auto px-2 py-2"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            scrollbarWidth: 'thin'
+          }}
+          onTouchMove={(e) => {
+            // Allow scrolling within sidebar
+            e.stopPropagation()
+          }}
+        >
           {conversations
             .filter((conv) => searchQuery ? conv.name.toLowerCase().includes(searchQuery.toLowerCase()) : true)
             .map((conv) => (
@@ -722,13 +740,19 @@ export default function MainChatPage() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{
-          WebkitOverflowScrolling: 'touch',
-          overscrollBehavior: 'contain',
-          overscrollBehaviorY: 'contain',
-          scrollbarWidth: 'thin',
-          touchAction: 'pan-y'
-        }}>
+        <div
+          className="flex-1 overflow-y-auto overflow-x-hidden"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain',
+            overscrollBehaviorY: 'contain',
+            scrollbarWidth: 'thin'
+          }}
+          onTouchMove={(e) => {
+            // Allow scrolling within this container
+            e.stopPropagation()
+          }}
+        >
           <div className="max-w-3xl mx-auto px-4 md:px-6 py-4 md:py-8 pb-4">
             {messages.length === 0 && (
               <div className="text-center py-12 px-4">
