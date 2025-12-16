@@ -196,53 +196,61 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="h-screen bg-bg-primary flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-bg-primary via-bg-primary to-bg-secondary flex overflow-hidden">
       {/* Sidebar */}
       <div
         className={`${
-          sidebarOpen ? 'w-72' : 'w-0'
-        } bg-bg-secondary border-r border-border-subtle flex-shrink-0 transition-all duration-300 overflow-hidden flex flex-col`}
+          sidebarOpen ? 'w-80' : 'w-0'
+        } bg-black/40 backdrop-blur-xl border-r border-white/5 flex-shrink-0 transition-all duration-300 overflow-hidden flex flex-col`}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-border-subtle">
+        <div className="p-4">
           <button
             onClick={handleNewChat}
-            className="w-full px-4 py-3 bg-bg-elevated border border-border-subtle hover:border-accent-blue rounded-lg text-left transition-all hover:bg-bg-hover group flex items-center gap-3"
+            className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-xl text-white font-medium transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
           >
-            <svg className="w-5 h-5 text-text-muted group-hover:text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-sm font-medium">New chat</span>
+            <span>New chat</span>
           </button>
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
           {conversations.length === 0 && (
-            <p className="text-text-muted text-sm text-center py-8">
-              No chats yet
-            </p>
+            <div className="text-center py-12">
+              <div className="text-4xl mb-3">💬</div>
+              <p className="text-text-muted text-sm">
+                Your chats will appear here
+              </p>
+            </div>
           )}
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => loadConversation(conv.id)}
-              className={`w-full px-3 py-2 rounded-lg text-left text-sm mb-1 transition-all ${
+              className={`w-full px-4 py-3 rounded-xl text-left text-sm transition-all group ${
                 currentConversationId === conv.id
-                  ? 'bg-bg-hover text-text-primary'
-                  : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary'
+                  ? 'bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 text-white'
+                  : 'text-text-secondary hover:bg-white/5 hover:text-white border border-transparent'
               }`}
             >
-              <div className="truncate">{conv.name || 'New chat'}</div>
+              <div className="truncate flex items-center gap-2">
+                <svg className={`w-4 h-4 flex-shrink-0 ${currentConversationId === conv.id ? 'text-orange-400' : 'text-text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <span className="truncate">{conv.name || 'New chat'}</span>
+              </div>
             </button>
           ))}
         </div>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-border-subtle relative user-menu-container">
+        <div className="p-4 border-t border-white/5 relative user-menu-container">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="w-full flex items-center justify-between hover:bg-bg-hover rounded-lg px-2 py-2 transition-colors"
+            className="w-full flex items-center justify-between hover:bg-white/5 rounded-xl px-3 py-3 transition-all"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
@@ -260,28 +268,32 @@ export default function MainChatPage() {
 
           {/* Dropdown Menu */}
           {showUserMenu && (
-            <div className="absolute bottom-full left-4 right-4 mb-2 bg-bg-elevated border border-border-subtle rounded-lg shadow-lg overflow-hidden">
+            <div className="absolute bottom-full left-4 right-4 mb-2 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl overflow-hidden">
               <button
                 onClick={handleUpgrade}
-                className="w-full px-4 py-3 text-left hover:bg-bg-hover transition-colors flex items-center gap-3"
+                className="w-full px-4 py-3 text-left hover:bg-white/5 transition-all flex items-center gap-3 group"
               >
-                <svg className="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                <div>
-                  <div className="text-sm font-medium">Upgrade plan</div>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-white group-hover:text-blue-400 transition-colors">Upgrade plan</div>
                   <div className="text-xs text-text-muted">Get more features</div>
                 </div>
               </button>
-              <div className="border-t border-border-subtle"></div>
+              <div className="border-t border-white/5"></div>
               <button
                 onClick={handleLogout}
-                className="w-full px-4 py-3 text-left hover:bg-bg-hover transition-colors flex items-center gap-3"
+                className="w-full px-4 py-3 text-left hover:bg-white/5 transition-all flex items-center gap-3 group"
               >
-                <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                <span className="text-sm font-medium">Log out</span>
+                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-text-muted group-hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </div>
+                <span className="text-sm font-medium text-white group-hover:text-red-400 transition-colors">Log out</span>
               </button>
             </div>
           )}
@@ -291,17 +303,25 @@ export default function MainChatPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="border-b border-border-subtle bg-bg-secondary/50 backdrop-blur-sm flex-shrink-0">
+        <header className="border-b border-white/5 bg-black/20 backdrop-blur-xl flex-shrink-0">
           <div className="px-6 py-4 flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-text-secondary hover:text-text-primary transition-colors"
+              className="p-2 hover:bg-white/5 rounded-lg transition-all text-text-secondary hover:text-white"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div className="text-lg font-semibold">Builder GPT</div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">AI</span>
+              </div>
+              <div>
+                <div className="text-base font-semibold text-white">Builder GPT</div>
+                <div className="text-xs text-text-muted">Your AI construction assistant</div>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -331,11 +351,11 @@ export default function MainChatPage() {
                     <button
                       key={idx}
                       onClick={() => setInput(example.text)}
-                      className="px-4 py-3 bg-bg-secondary border border-border-subtle hover:border-orange-500/50 rounded-xl text-sm text-left transition-all hover:bg-bg-hover group"
+                      className="px-5 py-4 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-orange-500/50 rounded-2xl text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group hover:shadow-lg hover:shadow-orange-500/10"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-xl">{example.icon}</span>
-                        <span className="group-hover:text-white transition-colors">"{example.text}"</span>
+                        <span className="text-2xl">{example.icon}</span>
+                        <span className="text-text-secondary group-hover:text-white transition-colors leading-relaxed">"{example.text}"</span>
                       </div>
                     </button>
                   ))}
@@ -463,29 +483,37 @@ export default function MainChatPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-border-subtle bg-bg-secondary/50 backdrop-blur-sm flex-shrink-0">
-          <div className="max-w-3xl mx-auto px-6 py-4">
-            <div className="flex gap-3">
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Message Builder GPT..."
-                rows={1}
-                className="flex-1 px-4 py-3 bg-bg-elevated border border-border-subtle rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-blue resize-none"
-                style={{ minHeight: '52px', maxHeight: '200px' }}
-              />
+        <div className="border-t border-white/5 bg-black/20 backdrop-blur-xl flex-shrink-0">
+          <div className="max-w-3xl mx-auto px-6 py-6">
+            <div className="flex gap-3 items-end">
+              <div className="flex-1 relative">
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Ask about payments, disputes, pricing, or any building issue..."
+                  rows={1}
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-text-muted focus:outline-none focus:border-orange-500/50 focus:bg-white/10 resize-none transition-all shadow-lg"
+                  style={{ minHeight: '56px', maxHeight: '200px' }}
+                />
+              </div>
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="px-5 py-3 bg-accent-blue hover:bg-accent-blue-hover text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 h-[52px]"
+                className="px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 h-[56px] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/20 disabled:hover:scale-100"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
+                {isLoading ? (
+                  <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                )}
               </button>
             </div>
-            <p className="text-xs text-text-muted mt-2 text-center">
+            <p className="text-xs text-text-muted mt-3 text-center">
               Builder GPT can make mistakes. Always verify important advice.
             </p>
           </div>
