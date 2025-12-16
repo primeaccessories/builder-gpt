@@ -207,7 +207,7 @@ export default function MainChatPage() {
         <div className="p-4">
           <button
             onClick={handleNewChat}
-            className="w-full px-4 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 rounded-xl text-white font-medium transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2"
+            className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -232,12 +232,12 @@ export default function MainChatPage() {
               onClick={() => loadConversation(conv.id)}
               className={`w-full px-4 py-3 rounded-xl text-left text-sm transition-all group ${
                 currentConversationId === conv.id
-                  ? 'bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 text-white'
+                  ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 text-white'
                   : 'text-text-secondary hover:bg-white/5 hover:text-white border border-transparent'
               }`}
             >
               <div className="truncate flex items-center gap-2">
-                <svg className={`w-4 h-4 flex-shrink-0 ${currentConversationId === conv.id ? 'text-orange-400' : 'text-text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-4 h-4 flex-shrink-0 ${currentConversationId === conv.id ? 'text-blue-400' : 'text-text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <span className="truncate">{conv.name || 'New chat'}</span>
@@ -253,7 +253,7 @@ export default function MainChatPage() {
             className="w-full flex items-center justify-between hover:bg-white/5 rounded-xl px-3 py-3 transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-lg shadow-blue-500/30">
                 {userName.charAt(0).toUpperCase()}
               </div>
               <div className="text-left">
@@ -314,7 +314,7 @@ export default function MainChatPage() {
               </svg>
             </button>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
                 <span className="text-white text-sm font-bold">AI</span>
               </div>
               <div>
@@ -351,7 +351,7 @@ export default function MainChatPage() {
                     <button
                       key={idx}
                       onClick={() => setInput(example.text)}
-                      className="px-5 py-4 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-orange-500/50 rounded-2xl text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group hover:shadow-lg hover:shadow-orange-500/10"
+                      className="px-5 py-4 bg-gradient-to-br from-white/5 to-white/0 border border-white/10 hover:border-blue-500/50 rounded-2xl text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98] group hover:shadow-lg hover:shadow-blue-500/10"
                     >
                       <div className="flex items-start gap-3">
                         <span className="text-2xl">{example.icon}</span>
@@ -372,7 +372,7 @@ export default function MainChatPage() {
               >
                 {msg.role === 'assistant' && (
                   <div className="flex gap-4 w-full">
-                    <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
                       <span className="text-white text-sm font-bold">AI</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -383,7 +383,7 @@ export default function MainChatPage() {
                             if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
                               return (
                                 <div key={i} className="flex gap-2 mb-2">
-                                  <span className="text-orange-400 flex-shrink-0">•</span>
+                                  <span className="text-blue-400 flex-shrink-0">•</span>
                                   <span>{line.replace(/^[•\-]\s*/, '')}</span>
                                 </div>
                               )
@@ -392,7 +392,7 @@ export default function MainChatPage() {
                             if (/^\d+\./.test(line.trim())) {
                               return (
                                 <div key={i} className="flex gap-2 mb-2">
-                                  <span className="text-orange-400 flex-shrink-0 font-semibold">
+                                  <span className="text-blue-400 flex-shrink-0 font-semibold">
                                     {line.match(/^\d+\./)?.[0]}
                                   </span>
                                   <span>{line.replace(/^\d+\.\s*/, '')}</span>
@@ -465,7 +465,7 @@ export default function MainChatPage() {
 
             {isLoading && (
               <div className="flex gap-4 max-w-3xl">
-                <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
                   <span className="text-white text-sm font-bold">AI</span>
                 </div>
                 <div className="flex-1 pt-1">
@@ -493,14 +493,14 @@ export default function MainChatPage() {
                   onKeyDown={handleKeyPress}
                   placeholder="Ask about payments, disputes, pricing, or any building issue..."
                   rows={1}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-text-muted focus:outline-none focus:border-orange-500/50 focus:bg-white/10 resize-none transition-all shadow-lg"
+                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-text-muted focus:outline-none focus:border-blue-500/50 focus:bg-white/10 resize-none transition-all shadow-lg"
                   style={{ minHeight: '56px', maxHeight: '200px' }}
                 />
               </div>
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="px-6 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-medium rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 h-[56px] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-orange-500/20 disabled:hover:scale-100"
+                className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 h-[56px] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20 disabled:hover:scale-100"
               >
                 {isLoading ? (
                   <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
