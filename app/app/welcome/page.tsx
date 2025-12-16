@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 const FEATURES = [
-  { emoji: '💷', text: 'Payment problems & late payments' },
-  { emoji: '🔁', text: 'Managing changes & extras' },
-  { emoji: '😤', text: 'Difficult customers & disputes' },
-  { emoji: '🧱', text: 'Job overruns & delays' },
-  { emoji: '📄', text: 'Pricing & quotes' },
-  { emoji: '⚠️', text: 'On-site problems - we always find a solution' },
+  { emoji: '💷', text: 'Customer won\'t pay — get the exact reply' },
+  { emoji: '🔁', text: 'Scope creep — how to price extras' },
+  { emoji: '😤', text: 'Bad review threats — stay professional' },
+  { emoji: '⚠️', text: 'Job stuck — what to check, what to do next' },
+  { emoji: '📄', text: 'Pricing questions — defend your numbers' },
+  { emoji: '🧱', text: 'Subbie gone quiet — message + backup plan' },
 ]
 
 export default function WelcomePage() {
@@ -65,14 +65,14 @@ export default function WelcomePage() {
             Welcome to Builder GPT
           </p>
           <p className="text-lg text-text-muted">
-            When things go wrong on site, we always find a solution
+            Know what to say. Right now.
           </p>
         </div>
 
         {/* What it helps with */}
         <div className="bg-bg-secondary border border-border-subtle rounded-2xl p-8 mb-10">
           <h2 className="text-xl font-semibold mb-6 text-text-primary">
-            Your AI assistant for:
+            When you need clarity fast:
           </h2>
           <div className="grid md:grid-cols-2 gap-4 text-left">
             {FEATURES.map((feature, idx) => (
@@ -96,7 +96,7 @@ export default function WelcomePage() {
         </button>
 
         <p className="text-sm text-text-muted mt-6">
-          Click an issue to start chatting
+          Just start typing your situation
         </p>
       </div>
     </div>

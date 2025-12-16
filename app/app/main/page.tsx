@@ -199,20 +199,20 @@ export default function MainChatPage() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-bg-primary via-bg-primary to-bg-secondary flex overflow-hidden">
+    <div className="h-screen bg-[#343541] flex overflow-hidden">
       {/* Sidebar */}
       <div
         className={`${
-          sidebarOpen ? 'w-80' : 'w-0'
-        } bg-black/40 backdrop-blur-xl border-r border-white/5 flex-shrink-0 transition-all duration-300 overflow-hidden flex flex-col`}
+          sidebarOpen ? 'w-[260px]' : 'w-0'
+        } bg-[#202123] flex-shrink-0 transition-all duration-200 overflow-hidden flex flex-col`}
       >
         {/* Sidebar Header */}
-        <div className="p-4">
+        <div className="p-2">
           <button
             onClick={handleNewChat}
-            className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl text-white font-medium transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+            className="w-full px-3 py-3 border border-white/20 hover:bg-[#2A2B32] rounded-lg text-white text-sm transition-colors flex items-center gap-3"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             <span>New chat</span>
@@ -220,30 +220,20 @@ export default function MainChatPage() {
         </div>
 
         {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
-          {conversations.length === 0 && (
-            <div className="text-center py-16 px-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5">
-                <div className="text-3xl">💬</div>
-              </div>
-              <p className="text-text-muted text-sm leading-relaxed">
-                Your conversations<br/>will appear here
-              </p>
-            </div>
-          )}
+        <div className="flex-1 overflow-y-auto px-2">
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => loadConversation(conv.id)}
-              className={`w-full px-4 py-3 rounded-xl text-left text-sm transition-all group ${
+              className={`w-full px-3 py-3 rounded-lg text-left text-sm transition-colors group relative ${
                 currentConversationId === conv.id
-                  ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 text-white'
-                  : 'text-text-secondary hover:bg-white/5 hover:text-white border border-transparent'
+                  ? 'bg-[#343541] text-white'
+                  : 'text-white/50 hover:bg-[#2A2B32] hover:text-white'
               }`}
             >
-              <div className="truncate flex items-center gap-2">
-                <svg className={`w-4 h-4 flex-shrink-0 ${currentConversationId === conv.id ? 'text-blue-400' : 'text-text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <div className="truncate flex items-center gap-3">
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
                 <span className="truncate">{conv.name || 'New chat'}</span>
               </div>
@@ -252,22 +242,17 @@ export default function MainChatPage() {
         </div>
 
         {/* User Profile */}
-        <div className="p-4 border-t border-white/5 relative user-menu-container">
+        <div className="p-2 border-t border-white/10 relative user-menu-container">
           <button
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="w-full flex items-center justify-between hover:bg-white/5 rounded-xl px-3 py-3 transition-all"
+            className="w-full flex items-center gap-3 hover:bg-[#2A2B32] rounded-lg px-3 py-2 transition-colors text-white text-sm"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-lg shadow-blue-500/30">
-                {userName.charAt(0).toUpperCase()}
-              </div>
-              <div className="text-left">
-                <div className="text-sm font-medium">{userName}</div>
-                <div className="text-xs text-text-muted">{getPlanDisplayName(userPlan)} Plan</div>
-              </div>
+            <div className="w-7 h-7 bg-[#19C37D] rounded-sm flex items-center justify-center text-white text-xs font-semibold">
+              {userName.charAt(0).toUpperCase()}
             </div>
-            <svg className={`w-4 h-4 text-text-muted transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            <div className="flex-1 text-left truncate">{userName}</div>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
             </svg>
           </button>
 
@@ -306,27 +291,24 @@ export default function MainChatPage() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-[#343541]">
         {/* Header */}
-        <header className="border-b border-white/5 bg-black/20 backdrop-blur-xl flex-shrink-0">
-          <div className="px-6 py-4 flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-white/5 rounded-lg transition-all text-text-secondary hover:text-white"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/30">
-                <span className="text-white text-sm font-bold">AI</span>
-              </div>
-              <div>
-                <div className="text-base font-semibold text-white">Builder GPT</div>
-                <div className="text-xs text-text-muted">Your AI construction assistant</div>
-              </div>
+        <header className="flex-shrink-0 bg-[#343541] border-b border-white/10">
+          <div className="px-4 py-3 flex items-center gap-2">
+            {!sidebarOpen && (
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="p-2 hover:bg-white/10 rounded-md transition-colors text-white"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            )}
+            <div className="flex-1 text-center">
+              <div className="text-sm font-semibold text-white">Builder GPT</div>
             </div>
+            <div className="w-5"></div>
           </div>
         </header>
 
@@ -334,45 +316,27 @@ export default function MainChatPage() {
         <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-6 py-8">
             {messages.length === 0 && (
-              <div className="text-center py-20 animate-fade-in">
-                <div className="mb-12">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 backdrop-blur-xl border border-white/10">
-                    <div className="text-5xl">🏗️</div>
-                  </div>
-                  <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
-                    How can I help you today?
-                  </h2>
-                  <p className="text-text-secondary text-lg leading-relaxed max-w-md mx-auto">
-                    Expert AI guidance for UK construction professionals
-                  </p>
-                </div>
+              <div className="text-center py-12">
+                <h2 className="text-3xl font-semibold mb-10 text-white">
+                  Builder GPT
+                </h2>
 
                 {/* Example prompts */}
                 <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto">
                   {[
-                    { icon: '💷', text: 'Customer refusing to pay final balance' },
-                    { icon: '📄', text: 'How to price a kitchen extension' },
-                    { icon: '🔁', text: 'Client wants extras but no paperwork' },
-                    { icon: '🧱', text: 'Job running over budget - what to do' },
-                    { icon: '😤', text: 'Difficult customer changing their mind' },
-                    { icon: '⚠️', text: 'Customer threatening legal action' },
+                    { text: 'Customer won\'t pay the final balance. Keeps saying they\'re "not happy" but won\'t list issues.' },
+                    { text: 'Customer keeps adding extras. I\'m halfway through and they assume it\'s included.' },
+                    { text: 'How do I price plastering a staircase and landing?' },
+                    { text: 'Customer says if I don\'t knock £300 off they\'ll ruin me on Facebook.' },
+                    { text: 'My subbie has gone quiet and I\'m meant to finish Friday.' },
+                    { text: 'How do I ask for a deposit without sounding dodgy?' },
                   ].map((example, idx) => (
                     <button
                       key={idx}
                       onClick={() => setInput(example.text)}
-                      className="relative px-6 py-5 bg-gradient-to-br from-white/5 via-white/3 to-transparent border border-white/10 hover:border-blue-500/40 rounded-2xl text-sm text-left transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group hover:shadow-xl hover:shadow-blue-500/10 backdrop-blur-sm overflow-hidden"
+                      className="px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg text-sm text-left transition-colors text-white/90"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-300"></div>
-                      <div className="relative flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center flex-shrink-0 border border-white/5 group-hover:scale-110 transition-transform duration-300">
-                          <span className="text-2xl">{example.icon}</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                          <span className="text-white/70 group-hover:text-white transition-colors duration-300 leading-relaxed block text-[15px]">
-                            {example.text}
-                          </span>
-                        </div>
-                      </div>
+                      <div className="text-sm">{example.text}</div>
                     </button>
                   ))}
                 </div>
@@ -380,38 +344,31 @@ export default function MainChatPage() {
             )}
 
             {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`group mb-8 ${
-                  msg.role === 'user' ? 'flex justify-end' : ''
-                }`}
-              >
+              <>
                 {msg.role === 'assistant' && (
-                  <div className="flex gap-5 w-full animate-fade-in">
-                    <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25">
-                      <span className="text-white text-sm font-bold">AI</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="prose prose-invert max-w-none">
-                        <div className="whitespace-pre-wrap leading-[1.7] text-[15px] text-white/90">
+                  <div key={idx} className="w-full text-white border-b border-black/10 bg-[#444654]">
+                    <div className="max-w-3xl mx-auto p-6 flex gap-6">
+                      <div className="w-8 h-8 flex-shrink-0">
+                        <div className="w-8 h-8 bg-[#19C37D] rounded-sm flex items-center justify-center">
+                          <span className="text-white text-xs font-semibold">AI</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="whitespace-pre-wrap text-base leading-7">
                           {msg.content.split('\n').map((line, i) => {
                             // Handle bullet points
                             if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
                               return (
-                                <div key={i} className="flex gap-2 mb-2">
-                                  <span className="text-blue-400 flex-shrink-0">•</span>
-                                  <span>{line.replace(/^[•\-]\s*/, '')}</span>
+                                <div key={i} className="mb-1">
+                                  <span>{line}</span>
                                 </div>
                               )
                             }
                             // Handle numbered lists
                             if (/^\d+\./.test(line.trim())) {
                               return (
-                                <div key={i} className="flex gap-2 mb-2">
-                                  <span className="text-blue-400 flex-shrink-0 font-semibold">
-                                    {line.match(/^\d+\./)?.[0]}
-                                  </span>
-                                  <span>{line.replace(/^\d+\.\s*/, '')}</span>
+                                <div key={i} className="mb-1">
+                                  <span>{line}</span>
                                 </div>
                               )
                             }
@@ -441,57 +398,43 @@ export default function MainChatPage() {
                           })}
                         </div>
                       </div>
-                      <div className="mt-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(msg.content)
-                          }}
-                          className="p-1.5 hover:bg-bg-hover rounded-lg transition-colors"
-                          title="Copy"
-                        >
-                          <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                        {idx === messages.length - 1 && !isLoading && (
-                          <button
-                            onClick={handleRegenerate}
-                            className="p-1.5 hover:bg-bg-hover rounded-lg transition-colors"
-                            title="Regenerate response"
-                          >
-                            <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
                     </div>
                   </div>
                 )}
 
                 {msg.role === 'user' && (
-                  <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/20 rounded-2xl px-6 py-4 max-w-2xl shadow-lg animate-fade-in backdrop-blur-sm">
-                    <div className="whitespace-pre-wrap leading-[1.7] text-[15px] text-white">
-                      {msg.content}
+                  <div key={idx} className="w-full text-white border-b border-black/10 bg-[#343541]">
+                    <div className="max-w-3xl mx-auto p-6 flex gap-6">
+                      <div className="w-8 h-8 flex-shrink-0">
+                        <div className="w-8 h-8 bg-[#5436DA] rounded-sm flex items-center justify-center">
+                          <span className="text-white text-xs font-semibold">{userName.charAt(0).toUpperCase()}</span>
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="whitespace-pre-wrap text-base leading-7">
+                          {msg.content}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
-              </div>
+              </>
             ))}
 
             {isLoading && (
-              <div className="flex gap-5 max-w-3xl animate-fade-in">
-                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/25 animate-pulse-slow">
-                  <span className="text-white text-sm font-bold">AI</span>
-                </div>
-                <div className="flex-1 pt-2">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                      <span className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                      <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              <div className="w-full text-white border-b border-black/10 bg-[#444654]">
+                <div className="max-w-3xl mx-auto p-6 flex gap-6">
+                  <div className="w-8 h-8 flex-shrink-0">
+                    <div className="w-8 h-8 bg-[#19C37D] rounded-sm flex items-center justify-center">
+                      <span className="text-white text-xs font-semibold">AI</span>
                     </div>
-                    <span className="text-sm text-text-muted ml-2">Thinking...</span>
+                  </div>
+                  <div className="flex-1 overflow-hidden pt-1">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -502,37 +445,29 @@ export default function MainChatPage() {
         </div>
 
         {/* Input */}
-        <div className="border-t border-white/5 bg-black/20 backdrop-blur-xl flex-shrink-0">
-          <div className="max-w-3xl mx-auto px-6 py-6">
-            <div className="flex gap-3 items-end">
-              <div className="flex-1 relative">
-                <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Ask about payments, disputes, pricing, or any building issue..."
-                  rows={1}
-                  className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-text-muted focus:outline-none focus:border-blue-500/50 focus:bg-white/10 resize-none transition-all shadow-lg"
-                  style={{ minHeight: '56px', maxHeight: '200px' }}
-                />
-              </div>
+        <div className="border-t border-white/10 bg-[#343541] flex-shrink-0">
+          <div className="max-w-3xl mx-auto px-6 py-4">
+            <div className="relative bg-[#40414F] rounded-lg border border-black/10 shadow-lg">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Send a message..."
+                rows={1}
+                className="w-full px-4 py-3 pr-12 bg-transparent text-white placeholder-white/50 focus:outline-none resize-none"
+                style={{ minHeight: '52px', maxHeight: '200px' }}
+              />
               <button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
-                className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 h-[56px] hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/20 disabled:hover:scale-100"
+                className="absolute right-2 bottom-2 p-2 text-white/50 hover:text-white disabled:text-white/20 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
-                  <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                ) : (
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                  </svg>
-                )}
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z"></path>
+                </svg>
               </button>
             </div>
-            <p className="text-xs text-text-muted mt-3 text-center">
+            <p className="text-xs text-white/40 mt-3 text-center">
               Builder GPT can make mistakes. Always verify important advice.
             </p>
           </div>
