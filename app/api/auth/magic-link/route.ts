@@ -3,6 +3,9 @@ import { prisma } from '@/lib/db'
 import { signMagicLink } from '@/lib/auth'
 import nodemailer from 'nodemailer'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json()
