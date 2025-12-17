@@ -310,7 +310,7 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <section>
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={() => router.push('/dashboard/jobs')}
               className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 hover:bg-white/[0.05] transition-all text-left group"
@@ -318,7 +318,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-white/90 mb-1">View all jobs</h3>
-                  <p className="text-sm text-white/50">Manage your projects</p>
+                  <p className="text-sm text-white/50">Manage your construction projects</p>
                 </div>
                 <svg className="w-5 h-5 text-white/30 group-hover:text-white/50 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -333,25 +333,10 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium text-white/90 mb-1">Money snapshot</h3>
-                  <p className="text-sm text-white/50">Track payments</p>
+                  <p className="text-sm text-white/50">Track payments and invoices</p>
                 </div>
                 <svg className="w-5 h-5 text-white/30 group-hover:text-white/50 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
-
-            <button
-              onClick={() => router.push('/dashboard/invoices/new')}
-              className="bg-gradient-to-r from-green-600 to-emerald-600 border border-green-500/20 rounded-xl p-6 hover:from-green-500 hover:to-emerald-500 transition-all text-left group"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-white mb-1">Create Invoice</h3>
-                  <p className="text-sm text-white/80">Generate professional invoices</p>
-                </div>
-                <svg className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
               </div>
             </button>
