@@ -262,6 +262,27 @@ export default function NewInvoicePage() {
     }
   }
 
+  const applyRecommendations = () => {
+    // Extract the "Recommended Quote Edits" section from the review
+    const editsMatch = reviewContent.match(/\*\*Recommended Quote Edits[^\*]*\*\*([\s\S]*?)(?=\*\*|$)/i)
+
+    if (editsMatch && editsMatch[1]) {
+      const recommendations = editsMatch[1].trim()
+
+      // Add recommendations to notes, preserving any existing notes
+      if (notes.trim()) {
+        setNotes(notes + '\n\n--- GPT Recommendations ---\n\n' + recommendations)
+      } else {
+        setNotes(recommendations)
+      }
+
+      setShowReview(false)
+      alert('Recommendations applied to quote notes!')
+    } else {
+      alert('No recommendations found to apply')
+    }
+  }
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-GB', {
       style: 'currency',
@@ -632,12 +653,23 @@ export default function NewInvoicePage() {
               <p className="text-sm text-white/50">
                 Review provided by Quote Review GPT
               </p>
-              <button
-                onClick={() => setShowReview(false)}
-                className="px-6 py-2.5 bg-white/[0.08] hover:bg-white/[0.12] rounded-lg text-sm font-medium transition-all active:scale-95"
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={applyRecommendations}
+                  className="px-6 py-2.5 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Apply Recommendations
+                </button>
+                <button
+                  onClick={() => setShowReview(false)}
+                  className="px-6 py-2.5 bg-white/[0.08] hover:bg-white/[0.12] rounded-lg text-sm font-medium transition-all active:scale-95"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
