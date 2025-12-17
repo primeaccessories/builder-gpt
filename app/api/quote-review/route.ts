@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { customerName, lineItems, subtotal, vatAmount, total, dueDate, notes } = body
+    const { customerName, jobDescription, lineItems, subtotal, vatAmount, total, dueDate, notes } = body
 
     if (!customerName || !lineItems || lineItems.length === 0) {
       return NextResponse.json(
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
     // Build the quote context
     const quoteContext = buildQuoteReviewContext({
       customerName,
+      jobDescription,
       lineItems,
       subtotal,
       vatAmount,

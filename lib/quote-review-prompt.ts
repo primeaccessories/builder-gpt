@@ -96,6 +96,7 @@ When detected, elevate Variation + Payment clauses and recommend written sign-of
 
 export function buildQuoteReviewContext(quoteData: {
   customerName: string
+  jobDescription?: string
   lineItems: Array<{
     title: string
     quantity: number
@@ -122,9 +123,13 @@ export function buildQuoteReviewContext(quoteData: {
 
   const notesText = quoteData.notes ? `\n\nAdditional notes:\n${quoteData.notes}` : ''
 
+  const jobDescriptionText = quoteData.jobDescription
+    ? `\n\n**Job Description:**\n${quoteData.jobDescription}`
+    : ''
+
   return `Please review this quote:
 
-**Customer:** ${quoteData.customerName}
+**Customer:** ${quoteData.customerName}${jobDescriptionText}
 
 **Line Items:**
 ${lineItemsText}

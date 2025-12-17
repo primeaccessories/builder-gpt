@@ -38,6 +38,7 @@ export default function NewInvoicePage() {
   const [customerAddress, setCustomerAddress] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [notes, setNotes] = useState('')
+  const [jobDescription, setJobDescription] = useState('')
 
   // Quote review
   const [showReview, setShowReview] = useState(false)
@@ -221,6 +222,11 @@ export default function NewInvoicePage() {
       return
     }
 
+    if (!jobDescription.trim()) {
+      alert('Please describe what this job is for (e.g., "Kitchen worktop replacement", "Bathroom renovation", etc.) so GPT can give better recommendations')
+      return
+    }
+
     if (lineItems.some((item) => !item.title.trim())) {
       alert('Please fill in all line item titles first')
       return
@@ -233,6 +239,7 @@ export default function NewInvoicePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           customerName,
+          jobDescription,
           lineItems: lineItems.map((item) => ({
             title: item.title,
             quantity: item.quantity,
@@ -451,6 +458,23 @@ export default function NewInvoicePage() {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="border-t border-white/[0.08] pt-8 mb-8"></div>
+
+          {/* Job Description */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-2">What's this quote for?</h3>
+            <p className="text-sm text-white/50 mb-4">
+              Describe the job so Quote Review GPT can give better recommendations (e.g., "Kitchen worktop replacement", "Full bathroom renovation with new suite", "Garden decking 4m x 3m")
+            </p>
+            <textarea
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              placeholder="e.g., Kitchen worktop replacement - remove old laminate, fit new quartz worktop, plumb in new sink"
+              rows={3}
+              className="w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-lg text-white placeholder-white/30 focus:outline-none focus:bg-white/[0.08] focus:border-white/[0.15] resize-none"
+            />
           </div>
 
           <div className="border-t border-white/[0.08] pt-8 mb-8"></div>
