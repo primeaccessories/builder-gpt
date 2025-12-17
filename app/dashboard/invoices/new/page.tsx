@@ -39,6 +39,11 @@ export default function NewInvoicePage() {
   const [dueDate, setDueDate] = useState('')
   const [notes, setNotes] = useState('')
 
+  // Quote review
+  const [showReview, setShowReview] = useState(false)
+  const [reviewContent, setReviewContent] = useState('')
+  const [reviewLoading, setReviewLoading] = useState(false)
+
   // Line items
   const [lineItems, setLineItems] = useState<LineItem[]>([
     {
@@ -210,6 +215,53 @@ export default function NewInvoicePage() {
     }
   }
 
+  const reviewQuote = async () => {
+    if (!customerName.trim()) {
+      alert('Please enter customer name first')
+      return
+    }
+
+    if (lineItems.some((item) => !item.title.trim())) {
+      alert('Please fill in all line item titles first')
+      return
+    }
+
+    setReviewLoading(true)
+    try {
+      const res = await fetch('/api/quote-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customerName,
+          lineItems: lineItems.map((item) => ({
+            title: item.title,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            vatApplicable: item.vatApplicable,
+          })),
+          subtotal,
+          vatAmount: totalVAT,
+          total: grandTotal,
+          dueDate: dueDate || null,
+          notes,
+        }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setReviewContent(data.review)
+        setShowReview(true)
+      } else {
+        alert('Failed to review quote')
+      }
+    } catch (error) {
+      console.error('Failed to review quote:', error)
+      alert('Failed to review quote')
+    } finally {
+      setReviewLoading(false)
+    }
+  }
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-GB', {
       style: 'currency',
@@ -252,6 +304,28 @@ export default function NewInvoicePage() {
               <h1 className="text-xl md:text-2xl font-bold">New Invoice</h1>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={reviewQuote}
+                disabled={reviewLoading}
+                className="px-4 py-2 bg-amber-600 hover:bg-amber-500 rounded-lg text-sm font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {reviewLoading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Reviewing...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Review Quote
+                  </>
+                )}
+              </button>
               <button
                 onClick={() => saveInvoice('DRAFT')}
                 className="px-4 py-2 bg-white/[0.08] hover:bg-white/[0.12] rounded-lg text-sm font-medium transition-all active:scale-95"
@@ -482,6 +556,92 @@ export default function NewInvoicePage() {
           </div>
         </div>
       </main>
+
+      {/* Review Modal */}
+      {showReview && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#111] border border-white/[0.1] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/[0.08]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-amber-600/10 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold">Quote Review</h2>
+              </div>
+              <button
+                onClick={() => setShowReview(false)}
+                className="p-2 hover:bg-white/[0.08] rounded-lg transition-all active:scale-95"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="prose prose-invert max-w-none">
+                <div
+                  className="text-white/90 whitespace-pre-wrap"
+                  style={{
+                    lineHeight: '1.7',
+                  }}
+                >
+                  {reviewContent.split('\n').map((line, index) => {
+                    // Detect section headings (e.g., **Summary**)
+                    if (line.match(/^\*\*.*\*\*$/)) {
+                      const heading = line.replace(/\*\*/g, '').trim()
+                      return (
+                        <h3 key={index} className="text-lg font-bold text-white mt-6 mb-3 first:mt-0">
+                          {heading}
+                        </h3>
+                      )
+                    }
+
+                    // Detect bullet points
+                    if (line.trim().startsWith('- ')) {
+                      return (
+                        <div key={index} className="flex gap-2 mb-2 text-white/80">
+                          <span className="text-amber-500 flex-shrink-0 mt-1">•</span>
+                          <span>{line.trim().substring(2)}</span>
+                        </div>
+                      )
+                    }
+
+                    // Regular paragraphs
+                    if (line.trim()) {
+                      return (
+                        <p key={index} className="mb-3 text-white/80">
+                          {line}
+                        </p>
+                      )
+                    }
+
+                    // Empty lines
+                    return <div key={index} className="h-2" />
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-white/[0.08] flex items-center justify-between">
+              <p className="text-sm text-white/50">
+                Review provided by Quote Review GPT
+              </p>
+              <button
+                onClick={() => setShowReview(false)}
+                className="px-6 py-2.5 bg-white/[0.08] hover:bg-white/[0.12] rounded-lg text-sm font-medium transition-all active:scale-95"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
