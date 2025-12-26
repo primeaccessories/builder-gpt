@@ -891,20 +891,29 @@ export default function BuildPriceProPage() {
           flex: 1;
           overflow-y: auto;
           overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
         }
 
         .buildprice-messages {
           max-width: 800px;
+          width: 100%;
           margin: 0 auto;
           padding: 40px 20px 120px 20px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .buildprice-placeholder {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           text-align: center;
           font-size: 28px;
           font-weight: 600;
           color: #CCC;
-          padding: 80px 20px;
           letter-spacing: -0.02em;
         }
 
@@ -1337,7 +1346,6 @@ export default function BuildPriceProPage() {
 
           .buildprice-placeholder {
             font-size: 22px;
-            padding: 60px 16px;
           }
 
           .buildprice-input-wrapper {
