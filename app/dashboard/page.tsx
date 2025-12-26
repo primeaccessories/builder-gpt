@@ -138,6 +138,17 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="border-b border-white/[0.08] bg-black/80 backdrop-blur-xl sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-5">
+          <div className="flex items-center gap-4 mb-3">
+            <button
+              onClick={() => router.push('/app/main')}
+              className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12 16L6 10L12 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Back to Chat
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">Good morning, {userName}</h1>
