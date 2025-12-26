@@ -900,21 +900,23 @@ export default function BuildPriceProPage() {
           width: 100%;
           margin: 0 auto;
           padding: 40px 20px 120px 20px;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
         }
 
-        .buildprice-placeholder {
+        .buildprice-messages:has(.buildprice-placeholder) {
+          padding: 0;
           flex: 1;
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+
+        .buildprice-placeholder {
           text-align: center;
           font-size: 28px;
           font-weight: 600;
           color: #CCC;
           letter-spacing: -0.02em;
+          padding: 20px;
         }
 
         .buildprice-message {
@@ -1342,6 +1344,10 @@ export default function BuildPriceProPage() {
 
           .buildprice-messages {
             padding: 24px 16px 100px 16px;
+          }
+
+          .buildprice-messages:has(.buildprice-placeholder) {
+            padding: 0;
           }
 
           .buildprice-placeholder {
