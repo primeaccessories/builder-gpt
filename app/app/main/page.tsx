@@ -17,9 +17,11 @@ export default function BuildPriceProPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; base64: string; type: string }[]>([])
   const [isDragging, setIsDragging] = useState(false)
+  const [uploadMenuOpen, setUploadMenuOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -318,18 +320,94 @@ export default function BuildPriceProPage() {
               onChange={(e) => handleFileSelect(e.target.files)}
               style={{ display: 'none' }}
             />
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              multiple
+              onChange={(e) => handleFileSelect(e.target.files)}
+              style={{ display: 'none' }}
+            />
 
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="buildprice-attach-btn"
-              type="button"
-              disabled={isLoading}
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M17 10L10 17M10 17L3 10M10 17V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
-              </svg>
-            </button>
+            {/* Upload Menu */}
+            <div className="buildprice-upload-menu-container">
+              <button
+                onClick={() => setUploadMenuOpen(!uploadMenuOpen)}
+                className="buildprice-plus-btn"
+                type="button"
+                disabled={isLoading}
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 4V16M4 10H16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+
+              {uploadMenuOpen && (
+                <>
+                  <div className="buildprice-upload-menu-overlay" onClick={() => setUploadMenuOpen(false)} />
+                  <div className="buildprice-upload-menu">
+                    <button
+                      onClick={() => {
+                        fileInputRef.current?.click()
+                        setUploadMenuOpen(false)
+                      }}
+                      className="buildprice-upload-menu-item"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M9 12V4M9 4L6 7M9 4L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M3 13V14C3 15.1046 3.89543 16 5 16H13C14.1046 16 15 15.1046 15 14V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                      <span>Upload from device</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        cameraInputRef.current?.click()
+                        setUploadMenuOpen(false)
+                      }}
+                      className="buildprice-upload-menu-item"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <rect x="2" y="5" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="9" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M6 5L7 3H11L12 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span>Take photo</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        window.open('https://www.dropbox.com/chooser', '_blank')
+                        setUploadMenuOpen(false)
+                      }}
+                      className="buildprice-upload-menu-item"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M4.5 2L9 5.5L4.5 9L1 5.5L4.5 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <path d="M13.5 2L9 5.5L13.5 9L17 5.5L13.5 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <path d="M4.5 12.5L9 16L13.5 12.5L9 9L4.5 12.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                      </svg>
+                      <span>From Dropbox</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        window.open('https://drive.google.com/drive/my-drive', '_blank')
+                        setUploadMenuOpen(false)
+                      }}
+                      className="buildprice-upload-menu-item"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M6 2L12 2L17 11L14 16H4L1 11L6 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <path d="M6 2L1 11H17L12 2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                      </svg>
+                      <span>From Google Drive</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
 
             <textarea
               ref={textareaRef}
@@ -703,7 +781,12 @@ export default function BuildPriceProPage() {
           align-items: flex-end;
         }
 
-        .buildprice-attach-btn {
+        .buildprice-upload-menu-container {
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .buildprice-plus-btn {
           background: #FFFFFF;
           border: 1px solid #D0D0D0;
           border-radius: 8px;
@@ -718,14 +801,70 @@ export default function BuildPriceProPage() {
           transition: all 0.2s;
         }
 
-        .buildprice-attach-btn:hover:not(:disabled) {
+        .buildprice-plus-btn:hover:not(:disabled) {
           border-color: #1F1F1F;
           background: #FAFAFA;
         }
 
-        .buildprice-attach-btn:disabled {
+        .buildprice-plus-btn:disabled {
           opacity: 0.3;
           cursor: not-allowed;
+        }
+
+        .buildprice-upload-menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 10;
+        }
+
+        .buildprice-upload-menu {
+          position: absolute;
+          bottom: 60px;
+          left: 0;
+          background: #FFFFFF;
+          border: 1px solid #D0D0D0;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          min-width: 200px;
+          overflow: hidden;
+          z-index: 20;
+        }
+
+        .buildprice-upload-menu-item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 16px;
+          background: transparent;
+          border: none;
+          border-bottom: 1px solid #F0F0F0;
+          color: #1F1F1F;
+          font-size: 14px;
+          font-weight: 500;
+          text-align: left;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .buildprice-upload-menu-item:last-child {
+          border-bottom: none;
+        }
+
+        .buildprice-upload-menu-item:hover {
+          background: #F7F7F7;
+        }
+
+        .buildprice-upload-menu-item svg {
+          flex-shrink: 0;
+          stroke: #666;
+        }
+
+        .buildprice-upload-menu-item:hover svg {
+          stroke: #1F1F1F;
         }
 
         .buildprice-input {
@@ -851,7 +990,7 @@ export default function BuildPriceProPage() {
             padding: 12px 14px;
           }
 
-          .buildprice-attach-btn,
+          .buildprice-plus-btn,
           .buildprice-send-btn {
             width: 44px;
             height: 44px;
