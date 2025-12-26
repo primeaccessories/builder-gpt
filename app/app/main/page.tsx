@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 interface Message {
   role: 'user' | 'assistant'
   content: string
+  images?: string[] // base64 encoded images
 }
 
 export default function BuildPriceProPage() {
@@ -14,8 +15,11 @@ export default function BuildPriceProPage() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; base64: string; type: string }[]>([])
+  const [isDragging, setIsDragging] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -35,14 +39,69 @@ export default function BuildPriceProPage() {
     textareaRef.current?.focus()
   }, [])
 
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
+    const newFiles: { name: string; base64: string; type: string }[] = []
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+
+      // Check if file is an image
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          const base64 = e.target?.result as string
+          newFiles.push({
+            name: file.name,
+            base64,
+            type: file.type,
+          })
+
+          if (newFiles.length === files.length) {
+            setUploadedFiles(prev => [...prev, ...newFiles])
+          }
+        }
+        reader.readAsDataURL(file)
+      }
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    handleFileSelect(e.dataTransfer.files)
+  }
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return
+    if ((!input.trim() && uploadedFiles.length === 0) || isLoading) return
 
     const userMessage = input.trim()
-    setInput('')
+    const filesToSend = [...uploadedFiles]
 
-    // Add user message
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    setInput('')
+    setUploadedFiles([])
+
+    // Add user message with images
+    setMessages(prev => [...prev, {
+      role: 'user',
+      content: userMessage || 'What can you tell me about this image?',
+      images: filesToSend.map(f => f.base64)
+    }])
     setIsLoading(true)
 
     try {
@@ -50,9 +109,14 @@ export default function BuildPriceProPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMessage,
+          message: userMessage || 'What can you tell me about this image?',
           issueType: 'pricing',
-          conversationHistory: messages.map(m => ({ role: m.role, content: m.content })),
+          conversationHistory: messages.map(m => ({
+            role: m.role,
+            content: m.content,
+            images: m.images
+          })),
+          images: filesToSend.map(f => f.base64),
         }),
       })
 
@@ -90,6 +154,7 @@ export default function BuildPriceProPage() {
   const startNewJob = () => {
     setMessages([])
     setInput('')
+    setUploadedFiles([])
     textareaRef.current?.focus()
   }
 
@@ -145,7 +210,25 @@ export default function BuildPriceProPage() {
       )}
 
       {/* Main Area */}
-      <div className="buildprice-main-area">
+      <div
+        className="buildprice-main-area"
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        {/* Drag overlay */}
+        {isDragging && (
+          <div className="buildprice-drag-overlay">
+            <div className="buildprice-drag-box">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <path d="M7 18C5.17107 18.4117 4 19.0443 4 19.7537C4 20.9943 7.58172 22 12 22C16.4183 22 20 20.9943 20 19.7537C20 19.0443 18.8289 18.4117 17 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M12 15V2M12 2L8 6M12 2L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <p>Drop images here</p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <header className="buildprice-header">
           <button
@@ -178,6 +261,14 @@ export default function BuildPriceProPage() {
                   <div className="buildprice-message-label">BuildPrice Pro</div>
                 )}
                 <div className="buildprice-message-content">
+                  {/* Show images if present */}
+                  {message.images && message.images.length > 0 && (
+                    <div className="buildprice-message-images">
+                      {message.images.map((img, idx) => (
+                        <img key={idx} src={img} alt={`Uploaded ${idx + 1}`} className="buildprice-message-image" />
+                      ))}
+                    </div>
+                  )}
                   {message.content.split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
@@ -200,7 +291,46 @@ export default function BuildPriceProPage() {
 
         {/* Input */}
         <div className="buildprice-input-wrapper">
+          {/* File previews */}
+          {uploadedFiles.length > 0 && (
+            <div className="buildprice-file-previews">
+              {uploadedFiles.map((file, index) => (
+                <div key={index} className="buildprice-file-preview">
+                  <img src={file.base64} alt={file.name} />
+                  <button
+                    onClick={() => removeFile(index)}
+                    className="buildprice-file-remove"
+                    type="button"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="buildprice-input-container">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => handleFileSelect(e.target.files)}
+              style={{ display: 'none' }}
+            />
+
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="buildprice-attach-btn"
+              type="button"
+              disabled={isLoading}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17 10L10 17M10 17L3 10M10 17V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="10" cy="10" r="1.5" fill="currentColor"/>
+              </svg>
+            </button>
+
             <textarea
               ref={textareaRef}
               value={input}
@@ -213,7 +343,7 @@ export default function BuildPriceProPage() {
             />
             <button
               onClick={sendMessage}
-              disabled={!input.trim() || isLoading}
+              disabled={(!input.trim() && uploadedFiles.length === 0) || isLoading}
               className="buildprice-send-btn"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -317,12 +447,46 @@ export default function BuildPriceProPage() {
           display: none;
         }
 
+        /* Drag & Drop */
+        .buildprice-drag-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(31, 31, 31, 0.95);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+        }
+
+        .buildprice-drag-box {
+          border: 2px dashed #F7F7F7;
+          border-radius: 16px;
+          padding: 60px 80px;
+          text-align: center;
+          color: #F7F7F7;
+        }
+
+        .buildprice-drag-box svg {
+          margin-bottom: 16px;
+          stroke: #F7F7F7;
+        }
+
+        .buildprice-drag-box p {
+          font-size: 18px;
+          font-weight: 600;
+          margin: 0;
+        }
+
         /* Main Area */
         .buildprice-main-area {
           flex: 1;
           display: flex;
           flex-direction: column;
           min-width: 0;
+          position: relative;
         }
 
         .buildprice-header {
@@ -432,6 +596,20 @@ export default function BuildPriceProPage() {
           color: #F7F7F7;
         }
 
+        .buildprice-message-images {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          margin-bottom: 12px;
+        }
+
+        .buildprice-message-image {
+          max-width: 200px;
+          max-height: 200px;
+          border-radius: 6px;
+          object-fit: cover;
+        }
+
         .buildprice-loading {
           display: flex;
           gap: 6px;
@@ -471,12 +649,83 @@ export default function BuildPriceProPage() {
           padding-bottom: max(16px, env(safe-area-inset-bottom));
         }
 
+        .buildprice-file-previews {
+          max-width: 800px;
+          margin: 0 auto 12px auto;
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .buildprice-file-preview {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          border-radius: 8px;
+          overflow: hidden;
+          border: 2px solid #D0D0D0;
+        }
+
+        .buildprice-file-preview img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .buildprice-file-remove {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: rgba(31, 31, 31, 0.9);
+          color: #F7F7F7;
+          border: none;
+          cursor: pointer;
+          font-size: 16px;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s;
+        }
+
+        .buildprice-file-remove:hover {
+          transform: scale(1.1);
+        }
+
         .buildprice-input-container {
           max-width: 800px;
           margin: 0 auto;
           display: flex;
           gap: 12px;
           align-items: flex-end;
+        }
+
+        .buildprice-attach-btn {
+          background: #FFFFFF;
+          border: 1px solid #D0D0D0;
+          border-radius: 8px;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #1F1F1F;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: all 0.2s;
+        }
+
+        .buildprice-attach-btn:hover:not(:disabled) {
+          border-color: #1F1F1F;
+          background: #FAFAFA;
+        }
+
+        .buildprice-attach-btn:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
         }
 
         .buildprice-input {
@@ -602,9 +851,14 @@ export default function BuildPriceProPage() {
             padding: 12px 14px;
           }
 
+          .buildprice-attach-btn,
           .buildprice-send-btn {
             width: 44px;
             height: 44px;
+          }
+
+          .buildprice-drag-box {
+            padding: 40px 60px;
           }
         }
       `}</style>

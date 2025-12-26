@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       conversationHistory = [],
       conversationId,
       projectId,
+      images = [], // Array of base64 images
     } = body
 
     // Tier enforcement: Job context only for SMALL_FIRM and PRO
@@ -66,26 +67,55 @@ export async function POST(request: NextRequest) {
     const systemPrompt = buildChatPrompt(issueType, finalJobContext)
 
     // Build messages array for OpenAI
-    const messages: Array<{ role: string; content: string }> = [
+    const messages: Array<{ role: string; content: any }> = [
       { role: 'system', content: systemPrompt },
     ]
 
     // Tier enforcement: Conversation history only for SMALL_FIRM and PRO
     const canUseHistory = user.plan !== 'SOLO'
     if (canUseHistory && conversationHistory.length > 0) {
-      conversationHistory.forEach((msg: { role: string; content: string }) => {
-        messages.push({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content,
-        })
+      conversationHistory.forEach((msg: { role: string; content: string; images?: string[] }) => {
+        // If message has images, use vision format
+        if (msg.images && msg.images.length > 0) {
+          const contentParts: any[] = [{ type: 'text', text: msg.content }]
+          msg.images.forEach((img: string) => {
+            contentParts.push({
+              type: 'image_url',
+              image_url: { url: img },
+            })
+          })
+          messages.push({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: contentParts,
+          })
+        } else {
+          messages.push({
+            role: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content,
+          })
+        }
       })
     }
 
-    // Add current message
-    messages.push({
-      role: 'user',
-      content: message,
-    })
+    // Add current message with images if present
+    if (images.length > 0) {
+      const contentParts: any[] = [{ type: 'text', text: message }]
+      images.forEach((img: string) => {
+        contentParts.push({
+          type: 'image_url',
+          image_url: { url: img },
+        })
+      })
+      messages.push({
+        role: 'user',
+        content: contentParts,
+      })
+    } else {
+      messages.push({
+        role: 'user',
+        content: message,
+      })
+    }
 
     // Call OpenAI
     const openai = getOpenAIClient()
