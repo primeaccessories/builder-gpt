@@ -306,6 +306,7 @@ model Invoice {
   customerEmail     String?
   customerPhone     String?
   customerAddress   String?
+  customerVatNumber String?
   subtotal          Float             @default(0)
   vatAmount         Float             @default(0)
   total             Float             @default(0)

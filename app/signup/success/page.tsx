@@ -81,7 +81,7 @@ function SuccessContent() {
           </svg>
         </div>
 
-        <h1 className="text-5xl font-bold mb-4">Welcome to Builder GPT!</h1>
+        <h1 className="text-5xl font-bold mb-4">Welcome to BuildPrice Pro!</h1>
         <p className="text-xl text-white/60 mb-8">
           Your 7-day free trial has started. You won't be charged until {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB')}
         </p>
@@ -95,7 +95,7 @@ function SuccessContent() {
             </li>
             <li className="flex items-start gap-3">
               <span className="text-orange-400 text-xl">✓</span>
-              <span>Use Builder GPT for advice on payments, disputes, pricing, and more</span>
+              <span>Use BuildPrice Pro for advice on payments, disputes, pricing, and more</span>
             </li>
             <li className="flex items-start gap-3">
               <span className="text-orange-400 text-xl">✓</span>
@@ -112,7 +112,7 @@ function SuccessContent() {
           href="/app"
           className="inline-block px-10 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold rounded-xl transition-all hover:scale-105 text-lg shadow-lg shadow-orange-500/25"
         >
-          Start using Builder GPT
+          Start using BuildPrice Pro
         </Link>
       </div>
     </div>

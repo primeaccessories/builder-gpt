@@ -700,7 +700,7 @@ export default function MainChatPage() {
               </svg>
             </button>
             <div className="flex-1 text-center">
-              <div className="text-sm font-semibold text-white/90">Builder GPT</div>
+              <div className="text-sm font-semibold text-white/90">BuildPrice Pro</div>
             </div>
 
             {/* 3-dot menu button - always visible */}
@@ -785,7 +785,7 @@ export default function MainChatPage() {
                     </svg>
                   </div>
                   <h2 className="text-2xl font-semibold mb-2 text-white/90">
-                    Builder GPT
+                    BuildPrice Pro
                   </h2>
                   <p className="text-sm text-white/50">
                     Know what to say. Right now.
@@ -989,7 +989,7 @@ export default function MainChatPage() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Message Builder GPT..."
+                  placeholder="Message BuildPrice Pro..."
                   rows={1}
                   className="flex-1 px-2 md:px-3 py-2.5 md:py-3 bg-transparent text-white/90 placeholder-white/40 focus:outline-none resize-none text-sm md:text-base leading-relaxed"
                   style={{ minHeight: '44px', maxHeight: '120px' }}
@@ -1020,7 +1020,7 @@ export default function MainChatPage() {
             </div>
 
             <p className="text-xs text-white/30 mt-2 text-center hidden md:block">
-              Builder GPT can make mistakes. Always verify important advice.
+              BuildPrice Pro can make mistakes. Always verify important advice.
             </p>
           </div>
         </div>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Builder GPT - Construction Problem Solver for UK Builders',
+  title: 'BuildPrice Pro - Construction Problem Solver for UK Builders',
   description: 'Get clear, practical guidance on payments, extras, difficult customers, pricing, and disputes. Built for UK builders and trades.',
   viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
 }

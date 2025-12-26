@@ -34,7 +34,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6 py-4 flex justify-between items-center max-w-7xl">
           <div className="flex items-center gap-3">
             <div className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-              Builder GPT
+              BuildPrice Pro
             </div>
           </div>
           <Link
@@ -95,7 +95,7 @@ export default function LandingPage() {
             You want: <span className="text-white font-semibold">"What do I say back — now?"</span>
           </p>
           <p className="text-lg text-white/50">
-            That's Builder GPT.
+            That's BuildPrice Pro.
           </p>
         </div>
       </section>
@@ -194,9 +194,9 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Builder GPT */}
+        {/* BuildPrice Pro */}
         <div className="mt-8 bg-gradient-to-br from-orange-500/10 to-amber-500/10 border-2 border-orange-400/40 rounded-2xl p-8">
-          <h3 className="text-2xl font-bold mb-6 text-orange-400">Builder GPT gives you:</h3>
+          <h3 className="text-2xl font-bold mb-6 text-orange-400">BuildPrice Pro gives you:</h3>
           <ul className="grid md:grid-cols-2 gap-4 text-white">
             <li className="flex items-start gap-3">
               <span className="text-orange-400 text-xl">✓</span>
@@ -257,7 +257,7 @@ export default function LandingPage() {
         </div>
 
         <p className="text-center text-xl text-white/70 mt-12">
-          Builder GPT costs <strong className="text-orange-400">£15–£49/month</strong>.<br />
+          BuildPrice Pro costs <strong className="text-orange-400">£15–£49/month</strong>.<br />
           That's less than fuel for two days.
         </p>
       </section>
@@ -393,7 +393,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 mt-20">
         <div className="container mx-auto px-6 max-w-7xl text-center text-white/40 text-sm">
-          <p>&copy; 2025 Builder GPT. For UK builders and trades.</p>
+          <p>&copy; 2025 BuildPrice Pro. For UK builders and trades.</p>
           <p className="mt-2">Know what to say. Right now.</p>
         </div>
       </footer>

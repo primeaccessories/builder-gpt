@@ -90,10 +90,10 @@ export async function POST(request: NextRequest) {
     // Call OpenAI
     const openai = getOpenAIClient()
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+      model: 'gpt-4o',
       messages: messages as any,
       temperature: 0.7,
-      max_tokens: 500,
+      max_tokens: 1500, // BuildPrice Pro needs space for structured output
     })
 
     const assistantResponse = completion.choices[0]?.message?.content || 'Sorry, I couldn\'t generate a response.'

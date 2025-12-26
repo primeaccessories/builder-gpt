@@ -36,6 +36,7 @@ export default function NewInvoicePage() {
   const [customerEmail, setCustomerEmail] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [customerAddress, setCustomerAddress] = useState('')
+  const [customerVatNumber, setCustomerVatNumber] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [notes, setNotes] = useState('')
   const [jobDescription, setJobDescription] = useState('')
@@ -184,6 +185,7 @@ export default function NewInvoicePage() {
           customerEmail,
           customerPhone,
           customerAddress,
+          customerVatNumber,
           dueDate: dueDate || null,
           notes,
           status,
@@ -455,6 +457,18 @@ export default function NewInvoicePage() {
                   placeholder="Customer address..."
                   rows={2}
                   className="w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-lg text-white placeholder-white/30 focus:outline-none focus:bg-white/[0.08] focus:border-white/[0.15] resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-2">
+                  VAT Number <span className="text-white/40 text-xs">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={customerVatNumber}
+                  onChange={(e) => setCustomerVatNumber(e.target.value)}
+                  placeholder="GB123456789"
+                  className="w-full px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-lg text-white placeholder-white/30 focus:outline-none focus:bg-white/[0.08] focus:border-white/[0.15]"
                 />
               </div>
             </div>

@@ -62,7 +62,7 @@ export default function WelcomePage() {
             Hello {userName}! 👋
           </h1>
           <p className="text-lg md:text-2xl text-text-secondary mb-1 md:mb-2">
-            Welcome to Builder GPT
+            Welcome to BuildPrice Pro
           </p>
           <p className="text-sm md:text-lg text-text-muted">
             Know what to say. Right now.
