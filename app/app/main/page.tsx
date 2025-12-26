@@ -164,24 +164,51 @@ export default function BuildPriceProPage() {
   }
 
   const openCamera = async () => {
+    setUploadMenuOpen(false)
+
+    // Check if getUserMedia is supported
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      alert('Camera access is not supported in this browser. Please use a modern browser like Chrome, Firefox, or Safari.')
+      return
+    }
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }, // Use rear camera on mobile
+      // Request camera access with fallback for desktop
+      const constraints = {
+        video: {
+          facingMode: { ideal: 'environment' }, // Prefer rear camera but allow front
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        },
         audio: false,
-      })
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
+
       setCameraStream(stream)
       setCameraOpen(true)
-      setUploadMenuOpen(false)
 
-      // Wait for video element to be ready
+      // Wait for next tick to ensure DOM is ready
       setTimeout(() => {
-        if (videoRef.current) {
+        if (videoRef.current && stream) {
           videoRef.current.srcObject = stream
+          videoRef.current.play().catch(err => {
+            console.error('Error playing video:', err)
+          })
         }
       }, 100)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Camera access error:', error)
-      alert('Could not access camera. Please check permissions.')
+
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        alert('Camera permission denied. Please allow camera access in your browser settings and try again.')
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        alert('No camera found on this device.')
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        alert('Camera is already in use by another application. Please close other apps using the camera and try again.')
+      } else {
+        alert('Could not access camera: ' + error.message)
+      }
     }
   }
 
