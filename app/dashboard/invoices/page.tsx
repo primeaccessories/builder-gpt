@@ -43,6 +43,12 @@ export default function InvoicesPage() {
     return inv.status === filter
   })
 
+  // Calculate financial metrics
+  const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.total, 0)
+  const totalPaid = invoices.filter(inv => inv.status === 'PAID').reduce((sum, inv) => sum + inv.total, 0)
+  const totalOutstanding = invoices.filter(inv => inv.status === 'SENT' || inv.status === 'OVERDUE').reduce((sum, inv) => sum + inv.total, 0)
+  const totalDraft = invoices.filter(inv => inv.status === 'DRAFT').reduce((sum, inv) => sum + inv.total, 0)
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'DRAFT':
@@ -104,6 +110,78 @@ export default function InvoicesPage() {
             >
               + New Invoice
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Financial Overview */}
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Total Invoiced */}
+          <div className="bg-white rounded-lg p-5 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600">Total Invoiced</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="3" y="4" width="14" height="12" rx="1" stroke="#666" strokeWidth="1.5"/>
+                <path d="M7 8H13M7 11H10" stroke="#666" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              £{totalInvoiced.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </div>
+            <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gray-400" style={{ width: '100%' }}></div>
+            </div>
+          </div>
+
+          {/* Money In (Paid) */}
+          <div className="bg-white rounded-lg p-5 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600">Money In</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M10 3V17M10 3L6 7M10 3L14 7" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="text-2xl font-bold text-green-600">
+              £{totalPaid.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </div>
+            <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-green-500" style={{ width: `${totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0}%` }}></div>
+            </div>
+          </div>
+
+          {/* Money Out (Outstanding) */}
+          <div className="bg-white rounded-lg p-5 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600">Outstanding</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="7" stroke="#ea580c" strokeWidth="1.5"/>
+                <path d="M10 6V10L13 13" stroke="#ea580c" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div className="text-2xl font-bold text-orange-600">
+              £{totalOutstanding.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </div>
+            <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-orange-500" style={{ width: `${totalInvoiced > 0 ? (totalOutstanding / totalInvoiced) * 100 : 0}%` }}></div>
+            </div>
+          </div>
+
+          {/* Draft */}
+          <div className="bg-white rounded-lg p-5 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-600">Draft</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 17L13 7L17 11L7 21H3V17Z" stroke="#666" strokeWidth="1.5" strokeLinejoin="round"/>
+                <path d="M13 7L15 5L17 7L15 9L13 7Z" stroke="#666" strokeWidth="1.5" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="text-2xl font-bold text-gray-900">
+              £{totalDraft.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+            </div>
+            <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gray-400" style={{ width: `${totalInvoiced > 0 ? (totalDraft / totalInvoiced) * 100 : 0}%` }}></div>
+            </div>
           </div>
         </div>
       </div>
