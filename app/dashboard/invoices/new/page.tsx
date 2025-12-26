@@ -313,7 +313,13 @@ export default function NewInvoicePage() {
   }
 
   if (showCompanySetup) {
-    return <CompanySetupForm onSave={saveCompanySettings} />
+    return (
+      <CompanySetupForm
+        onSave={saveCompanySettings}
+        initialSettings={companySettings || undefined}
+        onCancel={companySettings ? () => setShowCompanySetup(false) : undefined}
+      />
+    )
   }
 
   return (
@@ -716,8 +722,16 @@ export default function NewInvoicePage() {
   )
 }
 
-function CompanySetupForm({ onSave }: { onSave: (settings: CompanySettings) => void }) {
-  const [settings, setSettings] = useState<CompanySettings>({
+function CompanySetupForm({
+  onSave,
+  initialSettings,
+  onCancel
+}: {
+  onSave: (settings: CompanySettings) => void
+  initialSettings?: CompanySettings
+  onCancel?: () => void
+}) {
+  const [settings, setSettings] = useState<CompanySettings>(initialSettings || {
     companyName: '',
     addressLine1: '',
     addressLine2: '',
@@ -741,7 +755,9 @@ function CompanySetupForm({ onSave }: { onSave: (settings: CompanySettings) => v
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-6 md:p-8">
-          <h2 className="text-2xl font-bold mb-2">Set Up Your Company Info</h2>
+          <h2 className="text-2xl font-bold mb-2">
+            {initialSettings ? 'Edit Your Company Info' : 'Set Up Your Company Info'}
+          </h2>
           <p className="text-white/60 mb-6">This will appear on all your invoices</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -830,12 +846,21 @@ function CompanySetupForm({ onSave }: { onSave: (settings: CompanySettings) => v
               </div>
             </div>
 
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end gap-3 pt-4">
+              {onCancel && (
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  className="px-6 py-2.5 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg font-medium transition-all active:scale-95"
+                >
+                  Cancel
+                </button>
+              )}
               <button
                 type="submit"
                 className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium transition-all active:scale-95"
               >
-                Save & Continue
+                {initialSettings ? 'Save Changes' : 'Save & Continue'}
               </button>
             </div>
           </form>
