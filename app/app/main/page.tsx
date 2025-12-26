@@ -9,6 +9,13 @@ interface Message {
   images?: string[] // base64 encoded images
 }
 
+interface Conversation {
+  id: string
+  name: string
+  issueType: string
+  createdAt: string
+}
+
 export default function BuildPriceProPage() {
   const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
@@ -20,6 +27,8 @@ export default function BuildPriceProPage() {
   const [uploadMenuOpen, setUploadMenuOpen] = useState(false)
   const [cameraOpen, setCameraOpen] = useState(false)
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
+  const [conversations, setConversations] = useState<Conversation[]>([])
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -43,6 +52,39 @@ export default function BuildPriceProPage() {
   useEffect(() => {
     textareaRef.current?.focus()
   }, [])
+
+  // Fetch conversations on mount
+  useEffect(() => {
+    fetchConversations()
+  }, [])
+
+  const fetchConversations = async () => {
+    try {
+      const res = await fetch('/api/conversations')
+      if (res.ok) {
+        const data = await res.json()
+        setConversations(data.conversations)
+      }
+    } catch (error) {
+      console.error('Failed to fetch conversations:', error)
+    }
+  }
+
+  const loadConversation = async (conversationId: string) => {
+    try {
+      const res = await fetch(`/api/conversations/${conversationId}`)
+      if (res.ok) {
+        const data = await res.json()
+        setMessages(data.messages)
+        setCurrentConversationId(conversationId)
+        setUploadedFiles([])
+        setInput('')
+        textareaRef.current?.focus()
+      }
+    } catch (error) {
+      console.error('Failed to load conversation:', error)
+    }
+  }
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -122,6 +164,7 @@ export default function BuildPriceProPage() {
             images: m.images
           })),
           images: filesToSend.map(f => f.base64),
+          conversationId: currentConversationId,
         }),
       })
 
@@ -129,6 +172,13 @@ export default function BuildPriceProPage() {
 
       const data = await res.json()
       setMessages(prev => [...prev, { role: 'assistant', content: data.response }])
+
+      // Update conversation ID if this is a new conversation
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId)
+        // Refresh conversations list
+        fetchConversations()
+      }
     } catch (error) {
       console.error('Send message error:', error)
       setMessages(prev => [...prev, {
@@ -160,6 +210,7 @@ export default function BuildPriceProPage() {
     setMessages([])
     setInput('')
     setUploadedFiles([])
+    setCurrentConversationId(null)
     textareaRef.current?.focus()
   }
 
@@ -265,21 +316,44 @@ export default function BuildPriceProPage() {
         </div>
 
         <nav className="buildprice-nav">
-          <button onClick={startNewJob} className="buildprice-nav-item active">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M2 9C2 5.13401 5.13401 2 9 2C12.866 2 16 5.13401 16 9C16 12.866 12.866 16 9 16C5.13401 16 2 12.866 2 9Z" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M9 6V12M6 9H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            New Quote
-          </button>
+          {/* Quotes Section */}
+          <div className="buildprice-nav-section">
+            <div className="buildprice-nav-section-header">Quotes</div>
+            <button onClick={startNewJob} className={`buildprice-nav-item ${!currentConversationId ? 'active' : ''}`}>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 4V14M4 9H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              New Quote
+            </button>
 
-          <button onClick={() => router.push('/dashboard/invoices')} className="buildprice-nav-item">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <rect x="3" y="2" width="12" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M6 6H12M6 9H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            Invoices
-          </button>
+            {/* Conversation History */}
+            <div className="buildprice-conversations">
+              {conversations.map((conv) => (
+                <button
+                  key={conv.id}
+                  onClick={() => loadConversation(conv.id)}
+                  className={`buildprice-conversation-item ${currentConversationId === conv.id ? 'active' : ''}`}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 3C2 2.44772 2.44772 2 3 2H13C13.5523 2 14 2.44772 14 3V10C14 10.5523 13.5523 11 13 11H5L2 14V3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                  </svg>
+                  <span className="buildprice-conversation-name">{conv.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Invoices Section */}
+          <div className="buildprice-nav-section">
+            <div className="buildprice-nav-section-header">Invoices</div>
+            <button onClick={() => router.push('/dashboard/invoices')} className="buildprice-nav-item">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="2" width="12" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M6 6H12M6 9H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              View Invoices
+            </button>
+          </div>
         </nav>
 
         <div className="buildprice-sidebar-footer">
@@ -628,6 +702,74 @@ export default function BuildPriceProPage() {
         .buildprice-nav-item.active {
           background: #2A2A2A;
           color: #F7F7F7;
+        }
+
+        .buildprice-nav-section {
+          margin-bottom: 24px;
+        }
+
+        .buildprice-nav-section:last-child {
+          margin-bottom: 0;
+        }
+
+        .buildprice-nav-section-header {
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #666;
+          padding: 0 14px 8px 14px;
+          margin-bottom: 4px;
+        }
+
+        .buildprice-conversations {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .buildprice-conversation-item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 14px;
+          background: transparent;
+          border: none;
+          border-radius: 6px;
+          color: #888;
+          font-size: 13px;
+          font-weight: 400;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-bottom: 0;
+        }
+
+        .buildprice-conversation-item:hover {
+          background: #2A2A2A;
+          color: #F7F7F7;
+        }
+
+        .buildprice-conversation-item.active {
+          background: #2A2A2A;
+          color: #F7F7F7;
+        }
+
+        .buildprice-conversation-item svg {
+          flex-shrink: 0;
+          opacity: 0.7;
+        }
+
+        .buildprice-conversation-item.active svg {
+          opacity: 1;
+        }
+
+        .buildprice-conversation-name {
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .buildprice-sidebar-footer {
