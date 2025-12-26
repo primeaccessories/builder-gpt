@@ -328,14 +328,14 @@ export default function BuildPriceProPage() {
             </button>
           </div>
 
-          {/* Quotes Section */}
+          {/* Chats Section */}
           <div className="buildprice-nav-section">
-            <div className="buildprice-nav-section-header">Quotes</div>
+            <div className="buildprice-nav-section-header">Chats</div>
             <button onClick={startNewJob} className={`buildprice-nav-item ${!currentConversationId ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 4V14M4 9H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
-              New Quote
+              New Chat
             </button>
 
             {/* Conversation History */}
