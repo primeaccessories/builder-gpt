@@ -82,6 +82,17 @@ export default function InvoicesPage() {
       {/* Header */}
       <div className="bg-[#1F1F1F] border-b border-[#2A2A2A]">
         <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={() => router.push('/app/main')}
+              className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12 16L6 10L12 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Back to Chat
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-white mb-1">Invoices</h1>
