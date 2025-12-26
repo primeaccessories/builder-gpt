@@ -16,6 +16,17 @@ interface Conversation {
   createdAt: string
 }
 
+const PLACEHOLDER_PROMPTS = [
+  "What's the job?",
+  "Need a price for a job?",
+  "CIS or VAT question?",
+  "Help with materials pricing?",
+  "Customer quote needed?",
+  "Scope clarification?",
+  "Commercial or domestic?",
+  "What do you need priced?",
+]
+
 export default function BuildPriceProPage() {
   const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
@@ -29,11 +40,17 @@ export default function BuildPriceProPage() {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
+  const [placeholderText, setPlaceholderText] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  // Set random placeholder on mount
+  useEffect(() => {
+    setPlaceholderText(PLACEHOLDER_PROMPTS[Math.floor(Math.random() * PLACEHOLDER_PROMPTS.length)])
+  }, [])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -211,6 +228,8 @@ export default function BuildPriceProPage() {
     setInput('')
     setUploadedFiles([])
     setCurrentConversationId(null)
+    // Set new random placeholder
+    setPlaceholderText(PLACEHOLDER_PROMPTS[Math.floor(Math.random() * PLACEHOLDER_PROMPTS.length)])
     textareaRef.current?.focus()
   }
 
@@ -418,7 +437,7 @@ export default function BuildPriceProPage() {
           <div className="buildprice-messages">
             {messages.length === 0 && (
               <div className="buildprice-placeholder">
-                What's the job?
+                {placeholderText}
               </div>
             )}
             {messages.map((message, index) => (
