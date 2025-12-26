@@ -18,10 +18,13 @@ export default function BuildPriceProPage() {
   const [uploadedFiles, setUploadedFiles] = useState<{ name: string; base64: string; type: string }[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [uploadMenuOpen, setUploadMenuOpen] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -158,6 +161,66 @@ export default function BuildPriceProPage() {
     setInput('')
     setUploadedFiles([])
     textareaRef.current?.focus()
+  }
+
+  const openCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }, // Use rear camera on mobile
+        audio: false,
+      })
+      setCameraStream(stream)
+      setCameraOpen(true)
+      setUploadMenuOpen(false)
+
+      // Wait for video element to be ready
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+        }
+      }, 100)
+    } catch (error) {
+      console.error('Camera access error:', error)
+      alert('Could not access camera. Please check permissions.')
+    }
+  }
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return
+
+    const video = videoRef.current
+    const canvas = canvasRef.current
+
+    // Set canvas size to match video
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+
+    // Draw video frame to canvas
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+    // Convert to base64
+    const base64 = canvas.toDataURL('image/jpeg', 0.9)
+
+    // Add to uploaded files
+    setUploadedFiles(prev => [...prev, {
+      name: `photo-${Date.now()}.jpg`,
+      base64,
+      type: 'image/jpeg',
+    }])
+
+    // Close camera
+    closeCamera()
+  }
+
+  const closeCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop())
+      setCameraStream(null)
+    }
+    setCameraOpen(false)
   }
 
   return (
@@ -320,15 +383,6 @@ export default function BuildPriceProPage() {
               onChange={(e) => handleFileSelect(e.target.files)}
               style={{ display: 'none' }}
             />
-            <input
-              ref={cameraInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              multiple
-              onChange={(e) => handleFileSelect(e.target.files)}
-              style={{ display: 'none' }}
-            />
 
             {/* Upload Menu */}
             <div className="buildprice-upload-menu-container">
@@ -362,10 +416,7 @@ export default function BuildPriceProPage() {
                     </button>
 
                     <button
-                      onClick={() => {
-                        cameraInputRef.current?.click()
-                        setUploadMenuOpen(false)
-                      }}
+                      onClick={openCamera}
                       className="buildprice-upload-menu-item"
                     >
                       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -431,6 +482,42 @@ export default function BuildPriceProPage() {
           </div>
         </div>
       </div>
+
+      {/* Camera Modal */}
+      {cameraOpen && (
+        <div className="buildprice-camera-modal">
+          <div className="buildprice-camera-container">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="buildprice-camera-video"
+            />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+            <div className="buildprice-camera-controls">
+              <button
+                onClick={closeCamera}
+                className="buildprice-camera-close"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+
+              <button
+                onClick={capturePhoto}
+                className="buildprice-camera-capture"
+              >
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="14" stroke="currentColor" strokeWidth="3"/>
+                  <circle cx="16" cy="16" r="10" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .buildprice-app {
@@ -865,6 +952,90 @@ export default function BuildPriceProPage() {
 
         .buildprice-upload-menu-item:hover svg {
           stroke: #1F1F1F;
+        }
+
+        /* Camera Modal */
+        .buildprice-camera-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: #000000;
+          z-index: 2000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .buildprice-camera-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .buildprice-camera-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .buildprice-camera-controls {
+          position: absolute;
+          bottom: 40px;
+          left: 0;
+          right: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 60px;
+          padding: 0 20px;
+        }
+
+        .buildprice-camera-close {
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          width: 56px;
+          height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #FFFFFF;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .buildprice-camera-close:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.05);
+        }
+
+        .buildprice-camera-capture {
+          background: rgba(255, 255, 255, 0.9);
+          border: 4px solid rgba(255, 255, 255, 0.5);
+          border-radius: 50%;
+          width: 80px;
+          height: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #1F1F1F;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .buildprice-camera-capture:hover {
+          background: #FFFFFF;
+          transform: scale(1.05);
+        }
+
+        .buildprice-camera-capture:active {
+          transform: scale(0.95);
         }
 
         .buildprice-input {
