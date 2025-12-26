@@ -316,6 +316,18 @@ export default function BuildPriceProPage() {
         </div>
 
         <nav className="buildprice-nav">
+          {/* Invoices Section */}
+          <div className="buildprice-nav-section">
+            <div className="buildprice-nav-section-header">Invoices</div>
+            <button onClick={() => router.push('/dashboard/invoices')} className="buildprice-nav-item">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="3" y="2" width="12" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M6 6H12M6 9H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              View Invoices
+            </button>
+          </div>
+
           {/* Quotes Section */}
           <div className="buildprice-nav-section">
             <div className="buildprice-nav-section-header">Quotes</div>
@@ -341,18 +353,6 @@ export default function BuildPriceProPage() {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Invoices Section */}
-          <div className="buildprice-nav-section">
-            <div className="buildprice-nav-section-header">Invoices</div>
-            <button onClick={() => router.push('/dashboard/invoices')} className="buildprice-nav-item">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <rect x="3" y="2" width="12" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M6 6H12M6 9H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              View Invoices
-            </button>
           </div>
         </nav>
 
