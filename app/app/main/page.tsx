@@ -13,7 +13,7 @@ export default function BuildPriceProPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [showUserMenu, setShowUserMenu] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -29,6 +29,11 @@ export default function BuildPriceProPage() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
     }
   }, [input])
+
+  // Focus input on mount
+  useEffect(() => {
+    textareaRef.current?.focus()
+  }, [])
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return
@@ -46,7 +51,7 @@ export default function BuildPriceProPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userMessage,
-          issueType: 'pricing', // BuildPrice Pro is pricing-focused
+          issueType: 'pricing',
           conversationHistory: messages.map(m => ({ role: m.role, content: m.content })),
         }),
       })
@@ -85,52 +90,99 @@ export default function BuildPriceProPage() {
   const startNewJob = () => {
     setMessages([])
     setInput('')
+    textareaRef.current?.focus()
   }
 
   return (
-    <div className="buildprice-container">
-      {/* Header */}
-      <header className="buildprice-header">
-        <div className="buildprice-header-content">
-          <h1 className="buildprice-title">BuildPrice Pro</h1>
-          <div className="buildprice-header-actions">
-            {messages.length > 0 && (
-              <button onClick={startNewJob} className="buildprice-new-btn">
-                New Job
-              </button>
-            )}
-            <div className="buildprice-user-menu">
-              <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                className="buildprice-user-btn"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="10" cy="8" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                  <path d="M4 17C4 14 6 12 10 12C14 12 16 14 16 17" stroke="currentColor" strokeWidth="1.5"/>
-                </svg>
-              </button>
-              {showUserMenu && (
-                <div className="buildprice-user-dropdown">
-                  <button onClick={() => router.push('/dashboard')}>Dashboard</button>
-                  <button onClick={handleSignOut}>Sign Out</button>
-                </div>
-              )}
-            </div>
-          </div>
+    <div className="buildprice-app">
+      {/* Sidebar */}
+      <aside className={`buildprice-sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className="buildprice-sidebar-header">
+          <h2>BuildPrice Pro</h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="buildprice-sidebar-close"
+          >
+            ×
+          </button>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="buildprice-main">
-        <div className="buildprice-messages">
-          {messages.length === 0 ? (
-            <div className="buildprice-welcome">
-              <h2>What's the job?</h2>
-              <p>Tell me what you need to price and I'll walk you through it.</p>
-            </div>
-          ) : (
-            messages.map((message, index) => (
+        <nav className="buildprice-nav">
+          <button onClick={startNewJob} className="buildprice-nav-item active">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 9C2 5.13401 5.13401 2 9 2C12.866 2 16 5.13401 16 9C16 12.866 12.866 16 9 16C5.13401 16 2 12.866 2 9Z" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M9 6V12M6 9H12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            New Quote
+          </button>
+
+          <button onClick={() => router.push('/dashboard/invoices/new')} className="buildprice-nav-item">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="3" y="2" width="12" height="14" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+              <path d="M6 6H12M6 9H10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            Invoices
+          </button>
+
+          <button onClick={() => router.push('/dashboard')} className="buildprice-nav-item">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="2" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+              <rect x="10" y="2" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+              <rect x="2" y="10" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+              <rect x="10" y="10" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+            </svg>
+            Dashboard
+          </button>
+        </nav>
+
+        <div className="buildprice-sidebar-footer">
+          <button onClick={handleSignOut} className="buildprice-nav-item">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M7 16H4C3.44772 16 3 15.5523 3 15V3C3 2.44772 3.44772 2 4 2H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              <path d="M12 13L15 9M15 9L12 5M15 9H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Sign Out
+          </button>
+        </div>
+      </aside>
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="buildprice-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main Area */}
+      <div className="buildprice-main-area">
+        {/* Header */}
+        <header className="buildprice-header">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="buildprice-menu-btn"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 5H17M3 10H17M3 15H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+          <h1 className="buildprice-title">BuildPrice Pro</h1>
+          {messages.length > 0 && (
+            <button onClick={startNewJob} className="buildprice-new-btn">
+              New
+            </button>
+          )}
+        </header>
+
+        {/* Messages */}
+        <main className="buildprice-main">
+          <div className="buildprice-messages">
+            {messages.length === 0 && (
+              <div className="buildprice-placeholder">
+                What's the job?
+              </div>
+            )}
+            {messages.map((message, index) => (
               <div key={index} className={`buildprice-message ${message.role}`}>
                 {message.role === 'assistant' && (
                   <div className="buildprice-message-label">BuildPrice Pro</div>
@@ -141,87 +193,174 @@ export default function BuildPriceProPage() {
                   ))}
                 </div>
               </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="buildprice-message assistant">
-              <div className="buildprice-message-label">BuildPrice Pro</div>
-              <div className="buildprice-loading">
-                <span></span>
-                <span></span>
-                <span></span>
+            ))}
+            {isLoading && (
+              <div className="buildprice-message assistant">
+                <div className="buildprice-message-label">BuildPrice Pro</div>
+                <div className="buildprice-loading">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </main>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </main>
 
-      {/* Input */}
-      <div className="buildprice-input-wrapper">
-        <div className="buildprice-input-container">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your answer..."
-            className="buildprice-input"
-            rows={1}
-            disabled={isLoading}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!input.trim() || isLoading}
-            className="buildprice-send-btn"
-          >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+        {/* Input */}
+        <div className="buildprice-input-wrapper">
+          <div className="buildprice-input-container">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your answer..."
+              className="buildprice-input"
+              rows={1}
+              disabled={isLoading}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={!input.trim() || isLoading}
+              className="buildprice-send-btn"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
       <style jsx>{`
-        .buildprice-container {
+        .buildprice-app {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
           display: flex;
-          flex-direction: column;
           background: #F7F7F7;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Sidebar */
+        .buildprice-sidebar {
+          width: 240px;
+          background: #1F1F1F;
+          border-right: 1px solid #2A2A2A;
+          display: flex;
+          flex-direction: column;
+          flex-shrink: 0;
+          transition: transform 0.3s ease;
+        }
+
+        .buildprice-sidebar-header {
+          padding: 20px;
+          border-bottom: 1px solid #2A2A2A;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .buildprice-sidebar-header h2 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #F7F7F7;
+          margin: 0;
+          letter-spacing: -0.01em;
+        }
+
+        .buildprice-sidebar-close {
+          display: none;
+          background: none;
+          border: none;
+          color: #F7F7F7;
+          font-size: 28px;
+          cursor: pointer;
+          padding: 0;
+          line-height: 1;
+        }
+
+        .buildprice-nav {
+          flex: 1;
+          padding: 12px;
+          overflow-y: auto;
+        }
+
+        .buildprice-nav-item {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 14px;
+          background: transparent;
+          border: none;
+          border-radius: 6px;
+          color: #999;
+          font-size: 14px;
+          font-weight: 500;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-bottom: 4px;
+        }
+
+        .buildprice-nav-item:hover {
+          background: #2A2A2A;
+          color: #F7F7F7;
+        }
+
+        .buildprice-nav-item.active {
+          background: #2A2A2A;
+          color: #F7F7F7;
+        }
+
+        .buildprice-sidebar-footer {
+          padding: 12px;
+          border-top: 1px solid #2A2A2A;
+        }
+
+        .buildprice-overlay {
+          display: none;
+        }
+
+        /* Main Area */
+        .buildprice-main-area {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
         }
 
         .buildprice-header {
           background: #1F1F1F;
           border-bottom: 1px solid #2A2A2A;
           padding: 16px 20px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
           flex-shrink: 0;
         }
 
-        .buildprice-header-content {
-          max-width: 800px;
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+        .buildprice-menu-btn {
+          display: none;
+          background: none;
+          border: none;
+          color: #F7F7F7;
+          cursor: pointer;
+          padding: 4px;
         }
 
         .buildprice-title {
+          flex: 1;
           font-size: 20px;
           font-weight: 600;
           color: #F7F7F7;
           margin: 0;
           letter-spacing: -0.02em;
-        }
-
-        .buildprice-header-actions {
-          display: flex;
-          align-items: center;
-          gap: 12px;
         }
 
         .buildprice-new-btn {
@@ -241,57 +380,6 @@ export default function BuildPriceProPage() {
           border-color: #4A4A4A;
         }
 
-        .buildprice-user-menu {
-          position: relative;
-        }
-
-        .buildprice-user-btn {
-          background: transparent;
-          border: none;
-          color: #F7F7F7;
-          cursor: pointer;
-          padding: 8px;
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          transition: background 0.2s;
-        }
-
-        .buildprice-user-btn:hover {
-          background: #2A2A2A;
-        }
-
-        .buildprice-user-dropdown {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          margin-top: 8px;
-          background: #1F1F1F;
-          border: 1px solid #2A2A2A;
-          border-radius: 8px;
-          padding: 8px;
-          min-width: 160px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-          z-index: 1000;
-        }
-
-        .buildprice-user-dropdown button {
-          width: 100%;
-          padding: 10px 12px;
-          background: transparent;
-          border: none;
-          color: #F7F7F7;
-          font-size: 14px;
-          text-align: left;
-          cursor: pointer;
-          border-radius: 4px;
-          transition: background 0.2s;
-        }
-
-        .buildprice-user-dropdown button:hover {
-          background: #2A2A2A;
-        }
-
         .buildprice-main {
           flex: 1;
           overflow-y: auto;
@@ -304,24 +392,13 @@ export default function BuildPriceProPage() {
           padding: 40px 20px 120px 20px;
         }
 
-        .buildprice-welcome {
+        .buildprice-placeholder {
           text-align: center;
-          padding: 60px 20px;
-        }
-
-        .buildprice-welcome h2 {
-          font-size: 32px;
+          font-size: 28px;
           font-weight: 600;
-          color: #1F1F1F;
-          margin: 0 0 12px 0;
+          color: #CCC;
+          padding: 80px 20px;
           letter-spacing: -0.02em;
-        }
-
-        .buildprice-welcome p {
-          font-size: 16px;
-          color: #666;
-          margin: 0;
-          line-height: 1.5;
         }
 
         .buildprice-message {
@@ -397,10 +474,7 @@ export default function BuildPriceProPage() {
         }
 
         .buildprice-input-wrapper {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
+          position: relative;
           background: #F7F7F7;
           border-top: 1px solid #E0E0E0;
           padding: 16px 20px;
@@ -473,7 +547,40 @@ export default function BuildPriceProPage() {
           cursor: not-allowed;
         }
 
+        /* Mobile */
         @media (max-width: 768px) {
+          .buildprice-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+            transform: translateX(-100%);
+          }
+
+          .buildprice-sidebar.open {
+            transform: translateX(0);
+          }
+
+          .buildprice-sidebar-close {
+            display: block;
+          }
+
+          .buildprice-overlay {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+          }
+
+          .buildprice-menu-btn {
+            display: block;
+          }
+
           .buildprice-header {
             padding: 12px 16px;
           }
@@ -491,16 +598,9 @@ export default function BuildPriceProPage() {
             padding: 24px 16px 100px 16px;
           }
 
-          .buildprice-welcome {
-            padding: 40px 16px;
-          }
-
-          .buildprice-welcome h2 {
-            font-size: 24px;
-          }
-
-          .buildprice-welcome p {
-            font-size: 15px;
+          .buildprice-placeholder {
+            font-size: 22px;
+            padding: 60px 16px;
           }
 
           .buildprice-input-wrapper {
@@ -508,7 +608,7 @@ export default function BuildPriceProPage() {
           }
 
           .buildprice-input {
-            font-size: 16px; /* Prevent iOS zoom */
+            font-size: 16px;
             padding: 12px 14px;
           }
 
